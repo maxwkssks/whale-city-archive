@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html" class="active">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="./worldcups.html">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <p class="hero-subtitle">WHALE CITY ARCHIVE</p>
+
+      <h1>고래시티의 모든 순간을 기록하다</h1>
+
+      <p class="hero-desc">
+        고래시티의 명장면, 클립, 사건, 캐릭터, 월드컵 콘텐츠를
+        한곳에서 모아볼 수 있는 팬 아카이브 사이트입니다.
+      </p>
+
+      <div class="hero-buttons">
+        <button class="primary-btn" onclick="location.href='./clips.html'">
+          클립 보러가기
+        </button>
+
+        <button class="secondary-btn" onclick="location.href='./worldcup-create.html'">
+          월드컵 만들기
+        </button>
+
+        <button 
+          class="control-room-btn" 
+          onclick="window.open('https://www.nemopix.xyz/content/whalecity', '_blank')"
+        >
+          지통실 가기
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-card">
+      <div class="big-whale">🐳</div>
+      <p>오늘의 고래시티</p>
+      <h2>HOT CLIP</h2>
+    </div>
+  </section>
+
+  <section class="section" id="hotclips">
+    <div class="section-title">
+      <h2>오늘의 핫클립</h2>
+      <a href="./clips.html">전체보기</a>
+    </div>
+
+    <div class="clip-grid">
+
+      <article class="clip-card clickable-card" onclick="location.href='./clip-detail.html?id=1'">
+        <div class="thumbnail">
+          <img src="./images/clip1.jpg" alt="고래시티 레전드 장면">
+          <span class="thumbnail-badge">SOOP</span>
+        </div>
+
+        <div class="clip-info">
+          <span class="tag">#레전드</span>
+          <h3>고래시티 레전드 장면</h3>
+          <p>조회수 1,204 · 좋아요 340</p>
+        </div>
+      </article>
+
+      <article class="clip-card clickable-card" onclick="location.href='./clip-detail.html?id=2'">
+        <div class="thumbnail">
+          <img src="./images/clip2.jpg" alt="모두가 터진 웃긴 순간">
+          <span class="thumbnail-badge">YOUTUBE</span>
+        </div>
+
+        <div class="clip-info">
+          <span class="tag">#웃긴장면</span>
+          <h3>모두가 터진 웃긴 순간</h3>
+          <p>조회수 982 · 좋아요 221</p>
+        </div>
+      </article>
+
+      <article class="clip-card clickable-card" onclick="location.href='./clip-detail.html?id=3'">
+        <div class="thumbnail">
+          <img src="./images/clip3.jpg" alt="고래시티 최고의 명장면">
+          <span class="thumbnail-badge">LOCAL</span>
+        </div>
+
+        <div class="clip-info">
+          <span class="tag">#명장면</span>
+          <h3>고래시티 최고의 명장면</h3>
+          <p>조회수 1,842 · 좋아요 512</p>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="worldcup">
+    <div class="section-title">
+      <h2>고래시티 월드컵</h2>
+      <a href="./worldcups.html">더보기</a>
+    </div>
+
+    <div class="worldcup-grid">
+
+      <article class="worldcup-card">
+        <h3>최고의 명장면 월드컵</h3>
+        <p>고래시티 최고의 순간을 뽑아보세요.</p>
+        <button onclick="location.href='./worldcups.html'">시작하기</button>
+      </article>
+
+      <article class="worldcup-card">
+        <h3>웃긴 장면 월드컵</h3>
+        <p>가장 웃겼던 장면은 무엇일까요?</p>
+        <button onclick="location.href='./worldcups.html'">시작하기</button>
+      </article>
+
+      <article class="worldcup-card">
+        <h3>캐릭터 인기 월드컵</h3>
+        <p>가장 매력적인 캐릭터를 선택하세요.</p>
+        <button onclick="location.href='./worldcups.html'">시작하기</button>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="people-preview">
+    <div class="section-title">
+      <h2>인물 아카이브</h2>
+      <a href="./people.html">전체보기</a>
+    </div>
+
+    <div class="worldcup-grid">
+
+      <article class="worldcup-card">
+        <h3>고래시티 인물 모아보기</h3>
+        <p>고래시티에 등장하는 EMS, 경찰, 시청직원, 언론인, 정치인, 갱 정보를 확인하세요.</p>
+        <button onclick="location.href='./people.html'">인물 보기</button>
+      </article>
+
+      <article class="worldcup-card">
+        <h3>프로필 카드</h3>
+        <p>인물별 프로필 이미지, 애청자, 소속, RP 정보를 정리할 수 있습니다.</p>
+        <button onclick="location.href='./people.html'">이동하기</button>
+      </article>
+
+      <article class="worldcup-card">
+        <h3>검색과 필터</h3>
+        <p>이름, 소속, 역할 기준으로 인물을 빠르게 찾아볼 수 있습니다.</p>
+        <button onclick="location.href='./people.html'">검색하기</button>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section" id="events">
+    <div class="section-title">
+      <h2>고래시티 사건 기록</h2>
+      <a href="#events">기록 보기</a>
+    </div>
+
+    <div class="timeline">
+
+      <div class="timeline-item">
+        <span class="date">2026.05.08</span>
+        <p>고래시티 아카이브 기획 및 제작 시작</p>
+      </div>
+
+      <div class="timeline-item">
+        <span class="date">준비중</span>
+        <p>고래시티 주요 사건 기록이 추가될 예정입니다.</p>
+      </div>
+
+      <div class="timeline-item">
+        <span class="date">준비중</span>
+        <p>고래시티 클립과 연결된 사건 타임라인을 정리할 예정입니다.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

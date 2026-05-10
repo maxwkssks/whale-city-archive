@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>클립 상세 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html" class="active">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="#">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="detail-page">
+
+    <button class="back-btn" onclick="history.back()">← 목록으로 돌아가기</button>
+
+    <section id="clipDetail" class="detail-card"></section>
+
+    <section class="section related-section">
+      <div class="section-title">
+        <h2>관련 클립</h2>
+        <a href="./clips.html">전체보기</a>
+      </div>
+
+      <div id="relatedClips" class="clip-grid"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

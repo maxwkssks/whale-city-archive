@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>월드컵 플레이 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="./worldcups.html" class="active">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="worldcup-play-page">
+
+    <section class="worldcup-play-header">
+      <p class="hero-subtitle">WHALE CITY WORLDCUP</p>
+      <h1 id="playWorldcupTitle">월드컵 불러오는 중...</h1>
+      <p id="playWorldcupDesc">
+        후보를 하나씩 선택해서 최종 우승자를 뽑아보세요.
+      </p>
+
+      <div class="worldcup-progress-box">
+        <span id="roundLabel">준비중</span>
+        <span id="matchLabel">0 / 0</span>
+      </div>
+    </section>
+
+    <section id="worldcupPlayArea" class="worldcup-battle-area">
+      <div class="empty-message">
+        월드컵 데이터를 불러오는 중입니다.
+      </div>
+    </section>
+
+    <section id="worldcupWinnerArea" class="worldcup-winner-area hidden">
+      <!-- JS에서 우승자 결과 출력 -->
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>로그인 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="#">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="auth-page">
+
+    <section class="auth-card">
+
+      <div class="auth-title">
+        <p class="hero-subtitle">WHALE CITY ACCOUNT</p>
+        <h1>로그인 / 회원가입</h1>
+        <p>고래시티 아카이브 계정을 만들어 클립과 인물 기록을 관리해보세요.</p>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab active" id="loginTab">로그인</button>
+        <button class="auth-tab" id="signupTab">회원가입</button>
+      </div>
+
+      <!-- 로그인 폼 -->
+      <form class="auth-form" id="loginForm">
+        <label>
+          이메일
+          <input type="email" id="loginEmail" placeholder="example@email.com" required>
+        </label>
+
+        <label>
+          비밀번호
+          <input type="password" id="loginPassword" placeholder="비밀번호 입력" required>
+        </label>
+
+        <button type="submit" class="auth-submit-btn">로그인</button>
+
+        <p class="auth-message" id="loginMessage"></p>
+      </form>
+
+      <!-- 회원가입 폼 -->
+      <form class="auth-form hidden" id="signupForm">
+        <label>
+          닉네임
+          <input type="text" id="signupNickname" placeholder="닉네임 입력" required>
+        </label>
+
+        <label>
+          이메일
+          <input type="email" id="signupEmail" placeholder="example@email.com" required>
+        </label>
+
+        <label>
+          비밀번호
+          <input type="password" id="signupPassword" placeholder="비밀번호 6자 이상" required>
+        </label>
+
+        <label>
+          비밀번호 확인
+          <input type="password" id="signupPasswordCheck" placeholder="비밀번호 다시 입력" required>
+        </label>
+
+        <button type="submit" class="auth-submit-btn">회원가입</button>
+
+        <p class="auth-message" id="signupMessage"></p>
+      </form>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

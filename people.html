@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>인물 아카이브 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="#">월드컵</a>
+      <a href="./people.html" class="active">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="page">
+
+    <section class="page-hero">
+      <p class="hero-subtitle">WHALE CITY PEOPLE</p>
+      <h1>인물 아카이브</h1>
+      <p>
+        고래시티에 등장하는 인물, 스트리머, 캐릭터 정보를 한곳에서 확인하세요.
+      </p>
+    </section>
+
+    <section class="people-filter-box">
+      <input 
+        type="text" 
+        id="peopleSearchInput" 
+        placeholder="인물 이름, 설명, 소속을 검색하세요"
+      />
+
+      <div class="filter-buttons">
+  <button class="people-filter-btn active" data-role="전체">전체</button>
+  <button class="people-filter-btn" data-role="시민">시민</button>
+  <button class="people-filter-btn" data-role="EMS">EMS</button>
+  <button class="people-filter-btn" data-role="경찰">경찰</button>
+  <button class="people-filter-btn" data-role="시청직원">시청직원</button>
+  <button class="people-filter-btn" data-role="언론인">언론인</button>
+  <button class="people-filter-btn" data-role="정치인">정치인</button>
+  <button class="people-filter-btn" data-role="갱">갱</button>
+  <button class="people-filter-btn" data-role="운영자">운영자</button>
+</div>
+    </section>
+
+    <section class="section people-section">
+      <div class="section-title">
+        <h2>전체 인물</h2>
+        <span id="peopleCount">0명</span>
+      </div>
+
+      <div class="people-grid" id="peopleList"></div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

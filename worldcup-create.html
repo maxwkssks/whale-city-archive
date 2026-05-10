@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>월드컵 만들기 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="./worldcups.html" class="active">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="upload-page">
+
+    <section class="upload-card">
+
+      <div class="auth-title">
+        <p class="hero-subtitle">CREATE WORLDCUP</p>
+        <h1>월드컵 만들기</h1>
+        <p>
+          고래시티 명장면, 인물, 사건 등을 후보로 넣어 나만의 월드컵을 만들어보세요.
+        </p>
+      </div>
+
+      <form class="upload-form" id="worldcupCreateForm">
+
+        <label>
+          월드컵 제목
+          <input 
+            type="text" 
+            id="worldcupTitle" 
+            placeholder="예: 고래시티 최고의 명장면 월드컵"
+            required
+          >
+        </label>
+
+        <label>
+          월드컵 설명
+          <textarea 
+            id="worldcupDescription" 
+            placeholder="월드컵에 대한 설명을 입력하세요."
+            required
+          ></textarea>
+        </label>
+
+        <label>
+          카테고리
+          <select id="worldcupCategory" required>
+            <option value="명장면">명장면</option>
+            <option value="웃긴장면">웃긴장면</option>
+            <option value="인물">인물</option>
+            <option value="사건">사건</option>
+            <option value="감동">감동</option>
+            <option value="기타">기타</option>
+          </select>
+        </label>
+
+        <div class="worldcup-item-header">
+          <div>
+            <h2>후보 등록</h2>
+            <p>
+              최소 4개 이상 등록하세요. 후보 수가 많을수록 월드컵이 더 재미있어집니다.
+            </p>
+          </div>
+
+          <button type="button" class="small-add-btn" id="addWorldcupItemBtn">
+            후보 추가
+          </button>
+        </div>
+
+        <div id="worldcupItemList" class="worldcup-item-list">
+
+          <div id="worldcupItemList" class="worldcup-item-list">
+
+  <div class="worldcup-item-row">
+    <input type="text" class="candidate-name" placeholder="후보 이름" required>
+    <input type="text" class="candidate-image" placeholder="이미지 주소" required>
+    <input type="text" class="candidate-video" placeholder="영상 링크 선택 입력">
+    <button type="button" class="remove-candidate-btn">삭제</button>
+  </div>
+
+  <div class="worldcup-item-row">
+    <input type="text" class="candidate-name" placeholder="후보 이름" required>
+    <input type="text" class="candidate-image" placeholder="이미지 주소" required>
+    <input type="text" class="candidate-video" placeholder="영상 링크 선택 입력">
+    <button type="button" class="remove-candidate-btn">삭제</button>
+  </div>
+
+  <div class="worldcup-item-row">
+    <input type="text" class="candidate-name" placeholder="후보 이름" required>
+    <input type="text" class="candidate-image" placeholder="이미지 주소" required>
+    <input type="text" class="candidate-video" placeholder="영상 링크 선택 입력">
+    <button type="button" class="remove-candidate-btn">삭제</button>
+  </div>
+
+  <div class="worldcup-item-row">
+    <input type="text" class="candidate-name" placeholder="후보 이름" required>
+    <input type="text" class="candidate-image" placeholder="이미지 주소" required>
+    <input type="text" class="candidate-video" placeholder="영상 링크 선택 입력">
+    <button type="button" class="remove-candidate-btn">삭제</button>
+  </div>
+
+</div>
+
+        <div class="worldcup-help-box">
+          <h3>이미지 주소 입력 예시</h3>
+          <p>프로필 이미지나 클립 썸네일 주소를 넣으면 됩니다.</p>
+          <code>https://example.com/image.jpg</code>
+        </div>
+
+        <button type="submit" class="auth-submit-btn">
+          월드컵 등록하기
+        </button>
+
+        <p class="auth-message" id="worldcupCreateMessage"></p>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>클립 올리기 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <!-- 상단 메뉴 -->
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="#">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <!-- 클립 올리기 페이지 -->
+  <main class="upload-page">
+
+    <section class="upload-card">
+
+      <div class="auth-title">
+        <p class="hero-subtitle">UPLOAD CLIP</p>
+        <h1>클립 올리기</h1>
+        <p>
+          고래시티의 명장면, 웃긴 장면, 사건 영상을 아카이브에 등록하세요.
+        </p>
+      </div>
+
+      <form class="upload-form" id="uploadClipForm">
+
+        <label>
+          클립 제목
+          <input 
+            type="text" 
+            id="uploadTitle" 
+            placeholder="예: 고래시티 레전드 장면" 
+            required
+          >
+        </label>
+
+        <label>
+          태그
+          <select id="uploadTag" required>
+            <option value="레전드">레전드</option>
+            <option value="웃긴장면">웃긴장면</option>
+            <option value="명장면">명장면</option>
+            <option value="사건">사건</option>
+            <option value="감동">감동</option>
+          </select>
+        </label>
+
+        <label>
+  썸네일 이미지 주소
+  <input 
+    type="text" 
+    id="uploadThumbnail" 
+    placeholder="./images/clip1.jpg 또는 이미지 URL"
+    required
+  >
+</label>
+
+        <label>
+          영상 타입
+          <select id="uploadVideoType" required>
+            <option value="soop">SOOP</option>
+            <option value="youtube">YouTube</option>
+            <option value="local">MP4 파일</option>
+          </select>
+        </label>
+
+        <label>
+          영상 URL
+          <input 
+            type="text" 
+            id="uploadVideoUrl" 
+            placeholder="SOOP embed 주소 / YouTube embed 주소 / ./videos/sample1.mp4"
+            required
+          >
+        </label>
+
+        <label>
+          클립 설명
+          <textarea 
+            id="uploadDescription" 
+            placeholder="클립에 대한 설명을 입력하세요."
+            required
+          ></textarea>
+        </label>
+
+        <div class="upload-preview-box">
+          <p>썸네일 미리보기</p>
+
+          <div class="upload-preview">
+            <img id="thumbnailPreview" src="" alt="썸네일 미리보기">
+            <span id="previewPlaceholder">
+              이미지 주소를 입력하면 미리보기가 표시됩니다.
+            </span>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-submit-btn">
+          클립 등록하기
+        </button>
+
+        <p class="auth-message" id="uploadMessage"></p>
+
+      </form>
+
+    </section>
+
+  </main>
+
+  <!-- 푸터 -->
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

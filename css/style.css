@@ -1,0 +1,2174 @@
+html {
+  scroll-behavior: smooth;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans KR', sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(48, 180, 255, 0.25), transparent 35%),
+    linear-gradient(135deg, #061525, #081f3a 45%, #0b1020);
+  color: #ffffff;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+}
+
+/* ============================= */
+/* 상단 메뉴 */
+/* ============================= */
+
+.header {
+  width: 100%;
+  height: 76px;
+  padding: 0 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(5, 16, 30, 0.78);
+  backdrop-filter: blur(14px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 20px;
+}
+
+.logo-icon {
+  font-size: 28px;
+}
+
+.nav {
+  display: flex;
+  gap: 28px;
+  font-size: 15px;
+  color: #c8d8e8;
+}
+
+.nav a {
+  transition: 0.2s;
+}
+
+.nav a:hover,
+.nav a.active {
+  color: #74d7ff;
+  font-weight: 800;
+}
+
+.login-btn {
+  padding: 10px 20px;
+  border-radius: 999px;
+  background: rgba(116, 215, 255, 0.15);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.4);
+  transition: 0.2s;
+}
+
+.login-btn:hover {
+  background: rgba(116, 215, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+/* ============================= */
+/* 메인 배너 */
+/* ============================= */
+
+.hero {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 90px 24px 70px;
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr;
+  align-items: center;
+  gap: 40px;
+}
+
+.hero-subtitle {
+  color: #74d7ff;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 800;
+  letter-spacing: 3px;
+  margin-bottom: 18px;
+}
+
+.hero h1 {
+  font-size: 58px;
+  line-height: 1.15;
+  margin-bottom: 24px;
+  word-break: keep-all;
+}
+
+.hero-desc {
+  max-width: 620px;
+  font-size: 18px;
+  line-height: 1.8;
+  color: #c8d8e8;
+  margin-bottom: 32px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 14px;
+}
+
+.primary-btn,
+.secondary-btn {
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.primary-btn {
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+}
+
+.secondary-btn {
+  background: rgba(255, 255, 255, 0.08);
+  color: #dceeff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+  transform: translateY(-2px);
+}
+
+.hero-card {
+  min-height: 320px;
+  border-radius: 32px;
+  background:
+    linear-gradient(160deg, rgba(83, 199, 255, 0.3), rgba(58, 91, 255, 0.12)),
+    rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.big-whale {
+  font-size: 96px;
+  margin-bottom: 20px;
+}
+
+.hero-card p {
+  color: #c8d8e8;
+  margin-bottom: 8px;
+}
+
+.hero-card h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 38px;
+}
+
+/* ============================= */
+/* 공통 섹션 */
+/* ============================= */
+
+.section {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 24px 60px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 26px;
+}
+
+.section-title h2 {
+  font-size: 28px;
+}
+
+.section-title a {
+  color: #74d7ff;
+  font-size: 15px;
+}
+
+#clipCount,
+#peopleCount {
+  color: #74d7ff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* ============================= */
+/* 클립 카드 / 월드컵 카드 */
+/* ============================= */
+
+.clip-grid,
+.worldcup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.clip-card {
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: 0.25s;
+}
+
+.clip-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(116, 215, 255, 0.55);
+}
+
+.clickable-card {
+  cursor: pointer;
+}
+
+.thumbnail {
+  position: relative;
+  height: 180px;
+  background: #123;
+  overflow: hidden;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: 0.25s;
+}
+
+.clip-card:hover .thumbnail img {
+  transform: scale(1.06);
+}
+
+.thumbnail::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent 55%);
+}
+
+.thumbnail-badge {
+  position: absolute;
+  left: 14px;
+  bottom: 14px;
+  z-index: 2;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(6, 21, 37, 0.82);
+  color: #74d7ff;
+  font-size: 12px;
+  font-weight: 900;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+}
+
+.clip-info {
+  padding: 20px;
+}
+
+.tag {
+  display: inline-block;
+  margin-bottom: 10px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(116, 215, 255, 0.16);
+  color: #74d7ff;
+  font-size: 13px;
+}
+
+.clip-info h3 {
+  font-size: 19px;
+  margin-bottom: 10px;
+}
+
+.clip-info p {
+  color: #aebfd1;
+  font-size: 14px;
+  margin-top: 5px;
+}
+
+.worldcup-card {
+  padding: 26px;
+  border-radius: 24px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(116, 215, 255, 0.08));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.worldcup-card h3 {
+  font-size: 21px;
+  margin-bottom: 12px;
+}
+
+.worldcup-card p {
+  color: #c8d8e8;
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.worldcup-card button {
+  padding: 10px 18px;
+  border-radius: 12px;
+  background: #74d7ff;
+  color: #061525;
+  font-weight: 800;
+}
+
+/* ============================= */
+/* 사건 기록 타임라인 */
+/* ============================= */
+
+.timeline {
+  border-left: 2px solid rgba(116, 215, 255, 0.5);
+  padding-left: 24px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 22px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.timeline-item::before {
+  content: "";
+  position: absolute;
+  left: -32px;
+  top: 24px;
+  width: 14px;
+  height: 14px;
+  background: #74d7ff;
+  border-radius: 50%;
+  box-shadow: 0 0 18px rgba(116, 215, 255, 0.8);
+}
+
+.date {
+  display: block;
+  color: #74d7ff;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.timeline-item p {
+  color: #dceeff;
+}
+
+/* ============================= */
+/* 서브 페이지 공통 */
+/* ============================= */
+
+.page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.page-hero {
+  margin-bottom: 34px;
+}
+
+.page-hero h1 {
+  font-size: 46px;
+  margin-bottom: 14px;
+}
+
+.page-hero p {
+  color: #c8d8e8;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+/* ============================= */
+/* 클립 / 인물 검색 필터 공통 UI */
+/* ============================= */
+
+.filter-box,
+.people-filter-box {
+  max-width: 1180px;
+  margin: 0 auto 34px;
+  padding: 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+#searchInput,
+#peopleSearchInput {
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+#searchInput::placeholder,
+#peopleSearchInput::placeholder {
+  color: #8ea3b8;
+}
+
+#searchInput:focus,
+#peopleSearchInput:focus {
+  border-color: #74d7ff;
+  box-shadow: 0 0 0 4px rgba(116, 215, 255, 0.15);
+}
+
+.filter-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.filter-btn,
+.people-filter-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(116, 215, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: #c8d8e8;
+  font-size: 14px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.filter-btn:hover,
+.people-filter-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(116, 215, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(116, 215, 255, 0.65);
+}
+
+.filter-btn.active,
+.people-filter-btn.active {
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(64, 201, 255, 0.25);
+}
+
+#sortSelect {
+  width: 170px;
+  height: 46px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#sortSelect:focus {
+  border-color: #74d7ff;
+  box-shadow: 0 0 0 4px rgba(116, 215, 255, 0.15);
+}
+
+.clip-list-section,
+.people-section {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.empty-message {
+  grid-column: 1 / -1;
+  padding: 50px 20px;
+  text-align: center;
+  color: #8ea3b8;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* ============================= */
+/* clip-detail.html 클립 상세 페이지 */
+/* ============================= */
+
+.detail-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.back-btn {
+  margin-bottom: 24px;
+  padding: 11px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #c8d8e8;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.back-btn:hover {
+  transform: translateY(-2px);
+  color: #ffffff;
+  border-color: rgba(116, 215, 255, 0.6);
+  background: rgba(116, 215, 255, 0.14);
+}
+
+.detail-card {
+  padding: 32px;
+  border-radius: 30px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(116, 215, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.detail-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 26px;
+}
+
+.detail-title-area h1 {
+  font-size: 42px;
+  line-height: 1.25;
+  margin: 12px 0 14px;
+  word-break: keep-all;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #aebfd1;
+  font-size: 14px;
+}
+
+.detail-meta span {
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.detail-stat-box {
+  min-width: 190px;
+  padding: 18px;
+  border-radius: 22px;
+  background: rgba(6, 21, 37, 0.65);
+  border: 1px solid rgba(116, 215, 255, 0.2);
+}
+
+.detail-stat-box p {
+  color: #8ea3b8;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.detail-stat-box h3 {
+  color: #74d7ff;
+  font-size: 26px;
+  margin-bottom: 14px;
+}
+
+.video-box {
+  height: 430px;
+  border-radius: 24px;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 28px;
+  overflow: hidden;
+}
+
+.clip-video {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 24px;
+  object-fit: cover;
+  background: #000;
+}
+
+.video-placeholder {
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at center, rgba(116, 215, 255, 0.35), transparent 35%),
+    linear-gradient(135deg, rgba(64, 201, 255, 0.75), rgba(85, 124, 255, 0.75));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 24px;
+}
+
+.play-icon {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  color: #061525;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.25);
+}
+
+.video-placeholder h2 {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 36px;
+  letter-spacing: 2px;
+}
+
+.detail-desc {
+  padding: 24px;
+  border-radius: 22px;
+  background: rgba(6, 21, 37, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.09);
+}
+
+.detail-desc h2 {
+  font-size: 22px;
+  margin-bottom: 12px;
+}
+
+.detail-desc p {
+  color: #c8d8e8;
+  line-height: 1.8;
+  font-size: 16px;
+}
+
+.related-section {
+  padding-left: 0;
+  padding-right: 0;
+  margin-top: 40px;
+}
+
+/* ============================= */
+/* people.html 인물 카드 */
+/* ============================= */
+
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.people-card {
+  position: relative;
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(13, 19, 23, 0.92);
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  overflow: hidden;
+  transition: 0.25s;
+}
+
+.people-card::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: 18px;
+  padding: 1px;
+  background: linear-gradient(135deg, #8a2be2, #00d4ff);
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box, 
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.people-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 60px rgba(0, 212, 255, 0.16);
+}
+
+.people-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.people-avatar {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgba(116, 215, 255, 0.5);
+  flex-shrink: 0;
+}
+
+.people-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.people-name-area {
+  flex: 1;
+}
+
+.people-name-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.people-name-row h3 {
+  font-size: 23px;
+  margin-bottom: 6px;
+}
+
+.people-link {
+  color: #c8d8e8;
+  font-size: 20px;
+  transition: 0.2s;
+}
+
+.people-link:hover {
+  color: #74d7ff;
+  transform: translateY(-2px);
+}
+
+.people-followers {
+  color: #aebfd1;
+  font-size: 14px;
+}
+
+.people-desc {
+  color: #dceeff;
+  line-height: 1.7;
+  font-size: 15px;
+  min-height: 76px;
+  margin-bottom: 18px;
+}
+
+.people-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.32);
+  margin: 18px 0;
+}
+
+.people-info-title {
+  color: #aebfd1;
+  font-size: 14px;
+  margin-bottom: 12px;
+}
+
+.people-info-box {
+  padding: 12px 14px;
+  border-radius: 6px;
+  border: 1px solid rgba(220, 238, 255, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.people-team {
+  color: #ffffff;
+  font-weight: 900;
+}
+
+.people-role {
+  color: #c8d8e8;
+  font-size: 14px;
+}
+
+/* ============================= */
+/* 푸터 */
+/* ============================= */
+
+.footer {
+  text-align: center;
+  padding: 36px 20px;
+  color: #8ea3b8;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+/* ============================= */
+/* 반응형 */
+/* ============================= */
+
+@media (max-width: 900px) {
+  .header {
+    padding: 0 24px;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .hero {
+    grid-template-columns: 1fr;
+    padding-top: 60px;
+  }
+
+  .hero h1 {
+    font-size: 40px;
+  }
+
+  .clip-grid,
+  .worldcup-grid,
+  .people-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .page {
+    padding: 40px 18px;
+  }
+
+  .page-hero h1 {
+    font-size: 36px;
+  }
+
+  #sortSelect {
+    width: 100%;
+  }
+
+  .detail-page {
+    padding: 40px 18px;
+  }
+
+  .detail-top {
+    flex-direction: column;
+  }
+
+  .detail-title-area h1 {
+    font-size: 32px;
+  }
+
+  .detail-card {
+    padding: 22px;
+  }
+
+  .video-box {
+    height: 260px;
+  }
+
+  .video-placeholder h2 {
+    font-size: 28px;
+  }
+
+  .play-icon {
+    width: 66px;
+    height: 66px;
+    font-size: 28px;
+  }
+
+  .detail-stat-box {
+    width: 100%;
+  }
+
+  .people-filter-box,
+  .filter-box {
+    padding: 20px;
+  }
+}
+html {
+  scroll-behavior: smooth;
+}
+/* ============================= */
+/* login.html 로그인 / 회원가입 */
+/* ============================= */
+
+.auth-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 70px 24px;
+  min-height: calc(100vh - 76px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 520px;
+  padding: 34px;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(116, 215, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.auth-title {
+  margin-bottom: 26px;
+}
+
+.auth-title h1 {
+  font-size: 34px;
+  margin-bottom: 12px;
+}
+
+.auth-title p:last-child {
+  color: #c8d8e8;
+  line-height: 1.7;
+}
+
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 6px;
+  border-radius: 18px;
+  background: rgba(6, 21, 37, 0.72);
+  border: 1px solid rgba(116, 215, 255, 0.18);
+  margin-bottom: 22px;
+}
+
+.auth-tab {
+  height: 44px;
+  border-radius: 14px;
+  background: transparent;
+  color: #aebfd1;
+  font-size: 15px;
+  font-weight: 800;
+  transition: 0.2s;
+}
+
+.auth-tab.active {
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+  box-shadow: 0 10px 24px rgba(64, 201, 255, 0.25);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.auth-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #dceeff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.auth-form input {
+  width: 100%;
+  height: 50px;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.auth-form input::placeholder {
+  color: #8ea3b8;
+}
+
+.auth-form input:focus {
+  border-color: #74d7ff;
+  box-shadow: 0 0 0 4px rgba(116, 215, 255, 0.15);
+}
+
+.auth-submit-btn {
+  height: 52px;
+  border-radius: 16px;
+  margin-top: 6px;
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 900;
+  transition: 0.2s;
+}
+
+.auth-submit-btn:hover {
+  transform: translateY(-2px);
+}
+
+.auth-message {
+  min-height: 22px;
+  color: #74d7ff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.auth-message.error {
+  color: #ff7b7b;
+}
+
+.auth-message.success {
+  color: #74d7ff;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .auth-page {
+    padding: 40px 18px;
+  }
+
+  .auth-card {
+    padding: 24px;
+  }
+
+  .auth-title h1 {
+    font-size: 28px;
+  }
+}
+/* ============================= */
+/* 로그인 드롭다운 */
+/* ============================= */
+
+.login-area {
+  position: relative;
+}
+
+.login-dropdown {
+  position: absolute;
+  top: 54px;
+  right: 0;
+  width: 160px;
+  padding: 10px;
+  border-radius: 16px;
+  background: rgba(6, 21, 37, 0.96);
+  border: 1px solid rgba(116, 215, 255, 0.28);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.35);
+  display: none;
+  z-index: 999;
+}
+
+.login-dropdown.show {
+  display: block;
+}
+
+.login-dropdown button,
+.login-dropdown a {
+  width: 100%;
+  height: 42px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: transparent;
+  color: #c8d8e8;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  transition: 0.2s;
+}
+
+.login-dropdown button:hover,
+.login-dropdown a:hover {
+  background: rgba(116, 215, 255, 0.14);
+  color: #74d7ff;
+}
+
+.login-dropdown .logout-option {
+  color: #ff9c9c;
+}
+
+.login-dropdown .logout-option:hover {
+  background: rgba(255, 123, 123, 0.12);
+  color: #ff7b7b;
+}
+/* ============================= */
+/* upload.html 클립 올리기 */
+/* ============================= */
+
+.upload-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 70px 24px;
+  min-height: calc(100vh - 76px);
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.upload-card {
+  width: 100%;
+  max-width: 680px;
+  padding: 34px;
+  border-radius: 28px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(116, 215, 255, 0.06));
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.32);
+}
+
+.upload-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.upload-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #dceeff;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.upload-form input,
+.upload-form select,
+.upload-form textarea {
+  width: 100%;
+  padding: 0 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 15px;
+  transition: 0.2s;
+}
+
+.upload-form input,
+.upload-form select {
+  height: 50px;
+}
+
+.upload-form textarea {
+  min-height: 130px;
+  padding-top: 14px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.upload-form input::placeholder,
+.upload-form textarea::placeholder {
+  color: #8ea3b8;
+}
+
+.upload-form input:focus,
+.upload-form select:focus,
+.upload-form textarea:focus {
+  border-color: #74d7ff;
+  box-shadow: 0 0 0 4px rgba(116, 215, 255, 0.15);
+}
+
+.upload-preview-box {
+  margin-top: 4px;
+}
+
+.upload-preview-box p {
+  color: #aebfd1;
+  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.upload-preview {
+  height: 220px;
+  border-radius: 20px;
+  background: rgba(6, 21, 37, 0.75);
+  border: 1px dashed rgba(116, 215, 255, 0.35);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8ea3b8;
+  text-align: center;
+  padding: 20px;
+}
+
+.upload-preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+}
+
+@media (max-width: 900px) {
+  .upload-page {
+    padding: 40px 18px;
+  }
+
+  .upload-card {
+    padding: 24px;
+  }
+}
+/* ============================= */
+/* 클립 수정 / 삭제 버튼 */
+/* ============================= */
+
+.clip-owner-actions {
+  margin-top: 22px;
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.edit-clip-btn,
+.delete-clip-btn {
+  padding: 12px 18px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 900;
+  transition: 0.2s;
+}
+
+.edit-clip-btn {
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+}
+
+.delete-clip-btn {
+  background: rgba(255, 90, 90, 0.14);
+  color: #ff9c9c;
+  border: 1px solid rgba(255, 123, 123, 0.35);
+}
+
+.edit-clip-btn:hover,
+.delete-clip-btn:hover {
+  transform: translateY(-2px);
+}
+
+.delete-clip-btn:hover {
+  background: rgba(255, 90, 90, 0.22);
+  color: #ff7b7b;
+}
+
+@media (max-width: 900px) {
+  .clip-owner-actions {
+    flex-direction: column;
+  }
+
+  .edit-clip-btn,
+  .delete-clip-btn {
+    width: 100%;
+  }
+}
+/* ============================= */
+/* 인물 추가 미리보기 */
+/* ============================= */
+
+.profile-preview {
+  height: 180px;
+  border-radius: 20px;
+  background: rgba(6, 21, 37, 0.75);
+  border: 1px dashed rgba(116, 215, 255, 0.35);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8ea3b8;
+  text-align: center;
+  padding: 20px;
+}
+
+.profile-preview img {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: none;
+  border: 2px solid rgba(116, 215, 255, 0.55);
+}
+.control-room-btn {
+  padding: 14px 24px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 800;
+  background: rgba(255, 193, 7, 0.14);
+  color: #ffd86b;
+  border: 1px solid rgba(255, 216, 107, 0.42);
+  transition: 0.2s;
+}
+
+.control-room-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 193, 7, 0.22);
+  border-color: rgba(255, 216, 107, 0.75);
+}
+/* ============================= */
+/* 월드컵 만들기 */
+/* ============================= */
+
+.worldcup-item-header {
+  margin-top: 8px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.worldcup-item-header h2 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.worldcup-item-header p {
+  color: #aebfd1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.small-add-btn {
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: rgba(116, 215, 255, 0.16);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.4);
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+.worldcup-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.worldcup-item-row {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr 1.4fr 80px;
+  gap: 10px;
+  align-items: center;
+}
+.worldcup-item-row input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.remove-candidate-btn {
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 90, 90, 0.14);
+  color: #ff9c9c;
+  border: 1px solid rgba(255, 123, 123, 0.35);
+  font-weight: 900;
+}
+
+.worldcup-help-box {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(116, 215, 255, 0.08);
+  border: 1px solid rgba(116, 215, 255, 0.18);
+}
+
+.worldcup-help-box h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.worldcup-help-box p {
+  color: #c8d8e8;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.worldcup-help-box code {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(6, 21, 37, 0.8);
+  color: #74d7ff;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+@media (max-width: 900px) {
+  .worldcup-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .worldcup-item-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-candidate-btn {
+    width: 100%;
+  }
+}
+/* ============================= */
+/* 월드컵 목록 / 월드컵 만들기 */
+/* ============================= */
+
+.worldcup-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+
+.worldcup-card {
+  padding: 26px;
+  border-radius: 24px;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.1), rgba(116, 215, 255, 0.08)),
+    rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  transition: 0.25s;
+}
+
+.worldcup-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(116, 215, 255, 0.55);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.22);
+}
+
+.worldcup-card h3 {
+  font-size: 21px;
+  margin: 12px 0;
+  word-break: keep-all;
+}
+
+.worldcup-card p {
+  color: #c8d8e8;
+  line-height: 1.6;
+  margin-bottom: 14px;
+  font-size: 14px;
+}
+
+.worldcup-card button {
+  margin-top: 10px;
+  padding: 11px 18px;
+  border-radius: 12px;
+  background: #74d7ff;
+  color: #061525;
+  font-weight: 900;
+  transition: 0.2s;
+}
+
+.worldcup-card button:hover {
+  transform: translateY(-2px);
+  background: #9ee4ff;
+}
+
+/* 월드컵 필터 버튼 */
+.worldcup-filter-btn {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 1px solid rgba(116, 215, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: #c8d8e8;
+  font-size: 14px;
+  font-weight: 700;
+  transition: 0.2s;
+}
+
+.worldcup-filter-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(116, 215, 255, 0.18);
+  color: #ffffff;
+  border-color: rgba(116, 215, 255, 0.65);
+}
+
+.worldcup-filter-btn.active {
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+  border-color: transparent;
+  box-shadow: 0 10px 24px rgba(64, 201, 255, 0.25);
+}
+
+/* 월드컵 만들기 후보 영역 */
+.worldcup-item-header {
+  margin-top: 8px;
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.worldcup-item-header h2 {
+  font-size: 20px;
+  margin-bottom: 6px;
+}
+
+.worldcup-item-header p {
+  color: #aebfd1;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.small-add-btn {
+  padding: 11px 16px;
+  border-radius: 12px;
+  background: rgba(116, 215, 255, 0.16);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.4);
+  font-weight: 900;
+  white-space: nowrap;
+  transition: 0.2s;
+}
+
+.small-add-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(116, 215, 255, 0.24);
+  border-color: rgba(116, 215, 255, 0.7);
+}
+
+.worldcup-item-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.worldcup-item-row {
+  display: grid;
+  grid-template-columns: 1fr 1.8fr 80px;
+  gap: 10px;
+  align-items: center;
+}
+
+.worldcup-item-row input {
+  width: 100%;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+.worldcup-item-row input::placeholder {
+  color: #8ea3b8;
+}
+
+.worldcup-item-row input:focus {
+  border-color: #74d7ff;
+  box-shadow: 0 0 0 4px rgba(116, 215, 255, 0.15);
+}
+
+.remove-candidate-btn {
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(255, 90, 90, 0.14);
+  color: #ff9c9c;
+  border: 1px solid rgba(255, 123, 123, 0.35);
+  font-weight: 900;
+  transition: 0.2s;
+}
+
+.remove-candidate-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 90, 90, 0.22);
+  color: #ff7b7b;
+}
+
+.worldcup-help-box {
+  padding: 16px;
+  border-radius: 16px;
+  background: rgba(116, 215, 255, 0.08);
+  border: 1px solid rgba(116, 215, 255, 0.18);
+}
+
+.worldcup-help-box h3 {
+  font-size: 16px;
+  margin-bottom: 8px;
+}
+
+.worldcup-help-box p {
+  color: #c8d8e8;
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.worldcup-help-box code {
+  display: block;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(6, 21, 37, 0.8);
+  color: #74d7ff;
+  font-size: 13px;
+  word-break: break-all;
+}
+
+/* worldcups.html 검색창 */
+#worldcupSearchInput {
+  width: 100%;
+  height: 52px;
+  padding: 0 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  outline: none;
+  background: rgba(6, 21, 37, 0.92);
+  color: #ffffff;
+  font-size: 16px;
+  transition: 0.2s;
+}
+
+#worldcupSearchInput::placeholder {
+  color: #8ea3b8;
+}
+
+#worldcupSearchInput:focus {
+  border-color: #74d7ff;
+  box-shadow: 0 0 0 4px rgba(116, 215, 255, 0.15);
+}
+
+#worldcupCount {
+  color: #74d7ff;
+  font-size: 15px;
+  font-weight: 900;
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .worldcup-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .worldcup-item-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .worldcup-item-row {
+    grid-template-columns: 1fr;
+  }
+
+  .remove-candidate-btn {
+    width: 100%;
+  }
+}/* ============================= */
+/* 월드컵 플레이 */
+/* ============================= */
+
+.worldcup-play-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 60px 24px;
+}
+
+.worldcup-play-header {
+  margin-bottom: 34px;
+}
+
+.worldcup-play-header h1 {
+  font-size: 44px;
+  margin-bottom: 14px;
+  word-break: keep-all;
+}
+
+.worldcup-play-header p {
+  color: #c8d8e8;
+  line-height: 1.7;
+}
+
+.worldcup-progress-box {
+  margin-top: 22px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.worldcup-progress-box span {
+  padding: 9px 14px;
+  border-radius: 999px;
+  background: rgba(116, 215, 255, 0.14);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  font-weight: 900;
+  font-size: 14px;
+}
+
+.worldcup-battle-area {
+  display: grid;
+  grid-template-columns: 1fr 80px 1fr;
+  gap: 22px;
+  align-items: stretch;
+}
+
+.worldcup-choice-card {
+  min-height: 520px;
+  border-radius: 28px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.075);
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  cursor: pointer;
+  transition: 0.25s;
+  display: flex;
+  flex-direction: column;
+}
+
+.worldcup-choice-card:hover {
+  transform: translateY(-8px) scale(1.01);
+  border-color: rgba(116, 215, 255, 0.7);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+.worldcup-choice-image {
+  width: 100%;
+  height: 360px;
+  background: rgba(6, 21, 37, 0.85);
+  overflow: hidden;
+}
+
+.worldcup-choice-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.worldcup-choice-info {
+  padding: 22px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.worldcup-choice-info h2 {
+  font-size: 28px;
+  margin-bottom: 12px;
+  word-break: keep-all;
+}
+
+.worldcup-choice-info p {
+  color: #aebfd1;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.worldcup-video-link {
+  margin-top: 16px;
+  display: inline-flex;
+  justify-content: center;
+  padding: 11px 14px;
+  border-radius: 12px;
+  background: rgba(116, 215, 255, 0.16);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  font-weight: 900;
+}
+
+.worldcup-vs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 34px;
+  font-weight: 900;
+  color: #74d7ff;
+  text-shadow: 0 0 20px rgba(116, 215, 255, 0.7);
+}
+
+.worldcup-winner-area {
+  margin-top: 20px;
+}
+
+.worldcup-winner-card {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 32px;
+  border-radius: 30px;
+  text-align: center;
+  background:
+    radial-gradient(circle at top, rgba(255, 216, 107, 0.18), transparent 40%),
+    rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 216, 107, 0.35);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.35);
+}
+
+.winner-badge {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(255, 216, 107, 0.16);
+  color: #ffd86b;
+  border: 1px solid rgba(255, 216, 107, 0.4);
+  font-weight: 900;
+}
+
+.worldcup-winner-card h2 {
+  font-size: 38px;
+  margin-bottom: 18px;
+}
+
+.worldcup-winner-card img {
+  width: 100%;
+  max-height: 420px;
+  object-fit: cover;
+  border-radius: 22px;
+  margin-bottom: 22px;
+}
+
+.winner-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.winner-actions button,
+.winner-actions a {
+  padding: 13px 20px;
+  border-radius: 14px;
+  font-weight: 900;
+}
+
+.winner-actions button {
+  background: linear-gradient(135deg, #40c9ff, #557cff);
+  color: #ffffff;
+}
+
+.winner-actions a {
+  background: rgba(255, 255, 255, 0.08);
+  color: #dceeff;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.hidden {
+  display: none !important;
+}
+
+@media (max-width: 900px) {
+  .worldcup-play-header h1 {
+    font-size: 34px;
+  }
+
+  .worldcup-battle-area {
+    grid-template-columns: 1fr;
+  }
+
+  .worldcup-vs {
+    padding: 4px 0;
+  }
+
+  .worldcup-choice-card {
+    min-height: auto;
+  }
+
+  .worldcup-choice-image {
+    height: 260px;
+  }
+
+  .worldcup-choice-info h2 {
+    font-size: 22px;
+  }
+}
+.hidden {
+  display: none !important;
+}
+
+.gang-info-box {
+  margin-top: 8px;
+  border-color: rgba(255, 90, 90, 0.35);
+  background: rgba(255, 90, 90, 0.08);
+}
+
+.gang-info-box .people-team {
+  color: #ff9c9c;
+}
+
+.gang-info-box .people-role {
+  color: #ffd0d0;
+}
+/* ============================= */
+/* 프로필 수정 / 삭제 버튼 */
+/* ============================= */
+
+.people-owner-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 8px;
+}
+
+.people-owner-actions button {
+  flex: 1;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+/* 프로필 수정 버튼 */
+.edit-person-btn {
+  background: rgba(116, 215, 255, 0.12);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.45);
+}
+
+.edit-person-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(116, 215, 255, 0.22);
+  border-color: rgba(116, 215, 255, 0.85);
+  box-shadow: 0 8px 20px rgba(116, 215, 255, 0.18);
+}
+
+/* 프로필 삭제 버튼 */
+.delete-person-btn {
+  background: rgba(255, 80, 95, 0.12);
+  color: #ff8f9c;
+  border: 1px solid rgba(255, 80, 95, 0.45);
+}
+
+.delete-person-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 80, 95, 0.22);
+  border-color: rgba(255, 80, 95, 0.85);
+  box-shadow: 0 8px 20px rgba(255, 80, 95, 0.18);
+}
+
+.people-owner-actions button:active {
+  transform: scale(0.97);
+}
+.gang-select-box {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+#customGangNameBox {
+  animation: gangInputFade 0.2s ease;
+}
+
+#customGangName {
+  border-color: rgba(255, 90, 90, 0.4);
+}
+
+#customGangName:focus {
+  border-color: #ff8f9c;
+  box-shadow: 0 0 0 4px rgba(255, 90, 90, 0.14);
+}
+
+@keyframes gangInputFade {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+/* ============================= */
+/* 클립 좋아요 버튼 */
+/* ============================= */
+
+.clip-reaction-box {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.like-clip-btn {
+  padding: 13px 22px;
+  border-radius: 14px;
+  background: rgba(255, 90, 110, 0.14);
+  color: #ff9aaa;
+  border: 1px solid rgba(255, 90, 110, 0.4);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.like-clip-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 90, 110, 0.24);
+  border-color: rgba(255, 90, 110, 0.75);
+  box-shadow: 0 10px 24px rgba(255, 90, 110, 0.18);
+}
+
+.like-clip-btn.liked,
+.like-clip-btn:disabled {
+  cursor: not-allowed;
+  background: rgba(116, 215, 255, 0.14);
+  color: #74d7ff;
+  border-color: rgba(116, 215, 255, 0.45);
+  box-shadow: none;
+}
+/* ============================= */
+/* 클립 상세 페이지 레이아웃 수정 */
+/* ============================= */
+
+.detail-page,
+.clip-detail-page {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 56px 24px;
+}
+
+#clipDetail {
+  width: 100%;
+}
+
+.detail-top {
+  width: 100%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 220px;
+  gap: 24px;
+  align-items: start;
+  margin-bottom: 24px;
+}
+
+.detail-title-area h1 {
+  font-size: 42px;
+  line-height: 1.2;
+  margin-bottom: 14px;
+  word-break: keep-all;
+}
+
+.detail-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #9fc5df;
+  font-size: 14px;
+}
+
+.detail-stat-box {
+  padding: 18px;
+  border-radius: 18px;
+  background: rgba(6, 21, 37, 0.72);
+  border: 1px solid rgba(116, 215, 255, 0.18);
+}
+
+.detail-stat-box p {
+  color: #9fc5df;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+
+.detail-stat-box h3 {
+  color: #40c9ff;
+  font-size: 25px;
+  margin-bottom: 12px;
+}
+
+.video-box {
+  width: 100%;
+  margin: 24px 0;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #000;
+}
+
+.clip-video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  min-height: 480px;
+  display: block;
+  border: 0;
+  background: #000;
+}
+
+.detail-desc {
+  margin-top: 24px;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(6, 21, 37, 0.72);
+  border: 1px solid rgba(116, 215, 255, 0.14);
+}
+
+.detail-desc h2 {
+  margin-bottom: 12px;
+  font-size: 22px;
+}
+
+.detail-desc p {
+  color: #c8d8e8;
+  line-height: 1.7;
+}
+
+.clip-reaction-box {
+  margin-top: 18px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.like-clip-btn {
+  padding: 13px 22px;
+  border-radius: 14px;
+  background: rgba(255, 90, 110, 0.14);
+  color: #ff9aaa;
+  border: 1px solid rgba(255, 90, 110, 0.4);
+  font-size: 15px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.like-clip-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 90, 110, 0.24);
+  border-color: rgba(255, 90, 110, 0.75);
+  box-shadow: 0 10px 24px rgba(255, 90, 110, 0.18);
+}
+
+.like-clip-btn.liked,
+.like-clip-btn:disabled {
+  cursor: not-allowed;
+  background: rgba(116, 215, 255, 0.14);
+  color: #74d7ff;
+  border-color: rgba(116, 215, 255, 0.45);
+  box-shadow: none;
+}
+
+@media (max-width: 900px) {
+  .detail-top {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-title-area h1 {
+    font-size: 32px;
+  }
+
+  .clip-video {
+    min-height: 240px;
+  }
+}

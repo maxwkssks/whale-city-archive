@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>월드컵 목록 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="./worldcups.html" class="active">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="page">
+    <section class="page-hero">
+      <p class="hero-subtitle">WHALE CITY WORLDCUP</p>
+      <h1>월드컵 목록</h1>
+      <p>
+        시청자들이 직접 만든 고래시티 월드컵을 플레이해보세요.
+      </p>
+    </section>
+
+    <section class="filter-box">
+      <input 
+        type="text" 
+        id="worldcupSearchInput" 
+        placeholder="월드컵 제목이나 카테고리를 검색하세요"
+      />
+
+      <div class="filter-buttons">
+        <button class="worldcup-filter-btn active" data-category="전체">전체</button>
+        <button class="worldcup-filter-btn" data-category="명장면">명장면</button>
+        <button class="worldcup-filter-btn" data-category="웃긴장면">웃긴장면</button>
+        <button class="worldcup-filter-btn" data-category="인물">인물</button>
+        <button class="worldcup-filter-btn" data-category="사건">사건</button>
+        <button class="worldcup-filter-btn" data-category="감동">감동</button>
+        <button class="worldcup-filter-btn" data-category="기타">기타</button>
+      </div>
+
+      <button class="auth-submit-btn" onclick="location.href='./worldcup-create.html'">
+        월드컵 만들기
+      </button>
+    </section>
+
+    <section class="section clip-list-section">
+      <div class="section-title">
+        <h2>전체 월드컵</h2>
+        <span id="worldcupCount">0개</span>
+      </div>
+
+      <div class="worldcup-grid" id="worldcupList">
+        <div class="empty-message">
+          등록된 월드컵을 불러오는 중입니다.
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
