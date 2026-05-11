@@ -1391,12 +1391,12 @@ function setupLoginDropdown(user) {
     };
   }
 }
-
 onAuthStateChanged(auth, (user) => {
   currentUser = user;
   setupLoginDropdown(user);
   renderClipDetail();
   renderPeople();
+  initAdminPage();
 
   if (location.pathname.includes("upload.html") && !user) {
     showMessage(document.querySelector("#uploadMessage"), "로그인 후 클립을 올릴 수 있습니다.", "error");
@@ -2477,6 +2477,336 @@ async function initWorldcupPlayPage() {
       </div>
     `;
   }
+}
+
+/* ============================= */
+/* 관리자 페이지 기능 */
+/* ============================= */
+
+const ADMIN_UIDS = [
+  "Y5hTrp5RxBOXlZe2VSpCOfdwK1t2"
+];
+
+const adminAccessBox = document.querySelector("#adminAccessBox");
+const adminDashboard = document.querySelector("#adminDashboard");
+
+const adminClipCount = document.querySelector("#adminClipCount");
+const adminPeopleCount = document.querySelector("#adminPeopleCount");
+const adminWorldcupCount = document.querySelector("#adminWorldcupCount");
+
+const adminClipTableBody = document.querySelector("#adminClipTableBody");
+const adminPeopleTableBody = document.querySelector("#adminPeopleTableBody");
+const adminWorldcupTableBody = document.querySelector("#adminWorldcupTableBody");
+
+const adminRefreshClipsBtn = document.querySelector("#adminRefreshClipsBtn");
+const adminRefreshPeopleBtn = document.querySelector("#adminRefreshPeopleBtn");
+const adminRefreshWorldcupsBtn = document.querySelector("#adminRefreshWorldcupsBtn");
+
+function isAdminUser(user) {
+  if (!user) return false;
+  return ADMIN_UIDS.includes(user.uid);
+}
+
+function showAdminAccessMessage(title, message) {
+  if (!adminAccessBox) return;
+
+  adminAccessBox.innerHTML = `
+    <h2>${title}</h2>
+    <p>${message}</p>
+  `;
+}
+
+function openAdminDashboard() {
+  if (adminAccessBox) {
+    adminAccessBox.classList.add("hidden");
+  }
+
+  if (adminDashboard) {
+    adminDashboard.classList.remove("hidden");
+  }
+
+  loadAdminClips();
+  loadAdminPeople();
+  loadAdminWorldcups();
+}
+
+async function adminFetchDocuments(collectionName) {
+  const response = await fetch(
+    `https://firestore.googleapis.com/v1/projects/whale-city-archive/databases/default/documents/${collectionName}`
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    console.error(`${collectionName} 관리자 불러오기 실패:`, result);
+    throw new Error(result.error?.message || `${collectionName} 데이터를 불러오지 못했습니다.`);
+  }
+
+  return result.documents || [];
+}
+
+function getDocumentIdFromName(name) {
+  if (!name) return "";
+  return name.split("/").pop();
+}
+
+function getStringField(fields, key, fallback = "") {
+  return fields?.[key]?.stringValue || fallback;
+}
+
+function getIntegerField(fields, key, fallback = 0) {
+  return Number(fields?.[key]?.integerValue || fallback);
+}
+
+function getArrayLengthField(fields, key) {
+  const values = fields?.[key]?.arrayValue?.values;
+  return Array.isArray(values) ? values.length : 0;
+}
+
+async function loadAdminClips() {
+  if (!adminClipTableBody) return;
+
+  adminClipTableBody.innerHTML = `
+    <tr>
+      <td colspan="6">클립 데이터를 불러오는 중입니다.</td>
+    </tr>
+  `;
+
+  try {
+    const docs = await adminFetchDocuments("clips");
+
+    if (adminClipCount) {
+      adminClipCount.textContent = docs.length;
+    }
+
+    if (docs.length === 0) {
+      adminClipTableBody.innerHTML = `
+        <tr>
+          <td colspan="6">등록된 클립이 없습니다.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    adminClipTableBody.innerHTML = docs.map((docItem) => {
+      const id = getDocumentIdFromName(docItem.name);
+      const fields = docItem.fields || {};
+
+      const title = getStringField(fields, "title", "제목 없음");
+      const tag = getStringField(fields, "tag", "기타");
+      const views = getIntegerField(fields, "views", 0);
+      const likes = getIntegerField(fields, "likes", 0);
+      const uploaderName = getStringField(fields, "uploaderName", "알 수 없음");
+
+      return `
+        <tr>
+          <td>${title}</td>
+          <td>${tag}</td>
+          <td>${views.toLocaleString()}</td>
+          <td>${likes.toLocaleString()}</td>
+          <td>${uploaderName}</td>
+          <td>
+            <button 
+              type="button" 
+              class="admin-view-btn"
+              onclick="location.href='./clip-detail.html?id=${id}'"
+            >
+              보기
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+
+    if (adminClipCount) {
+      adminClipCount.textContent = "0";
+    }
+
+    adminClipTableBody.innerHTML = `
+      <tr>
+        <td colspan="6">클립 데이터를 불러오지 못했습니다.</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadAdminPeople() {
+  if (!adminPeopleTableBody) return;
+
+  adminPeopleTableBody.innerHTML = `
+    <tr>
+      <td colspan="6">프로필 데이터를 불러오는 중입니다.</td>
+    </tr>
+  `;
+
+  try {
+    const docs = await adminFetchDocuments("people");
+
+    if (adminPeopleCount) {
+      adminPeopleCount.textContent = docs.length;
+    }
+
+    if (docs.length === 0) {
+      adminPeopleTableBody.innerHTML = `
+        <tr>
+          <td colspan="6">등록된 프로필이 없습니다.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    adminPeopleTableBody.innerHTML = docs.map((docItem) => {
+      const fields = docItem.fields || {};
+
+      const name = getStringField(fields, "name", "이름 없음");
+      const type = getStringField(fields, "type", "시민");
+      const team = getStringField(fields, "team", "소속 없음");
+      const role = getStringField(fields, "role", "역할 없음");
+      const gangName = getStringField(fields, "gangName", "-");
+
+      return `
+        <tr>
+          <td>${name}</td>
+          <td>${type}</td>
+          <td>${team}</td>
+          <td>${role}</td>
+          <td>${gangName || "-"}</td>
+          <td>
+            <button 
+              type="button" 
+              class="admin-view-btn"
+              onclick="location.href='./people.html'"
+            >
+              보기
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+
+    if (adminPeopleCount) {
+      adminPeopleCount.textContent = "0";
+    }
+
+    adminPeopleTableBody.innerHTML = `
+      <tr>
+        <td colspan="6">프로필 데이터를 불러오지 못했습니다.</td>
+      </tr>
+    `;
+  }
+}
+
+async function loadAdminWorldcups() {
+  if (!adminWorldcupTableBody) return;
+
+  adminWorldcupTableBody.innerHTML = `
+    <tr>
+      <td colspan="6">월드컵 데이터를 불러오는 중입니다.</td>
+    </tr>
+  `;
+
+  try {
+    const docs = await adminFetchDocuments("worldcups");
+
+    if (adminWorldcupCount) {
+      adminWorldcupCount.textContent = docs.length;
+    }
+
+    if (docs.length === 0) {
+      adminWorldcupTableBody.innerHTML = `
+        <tr>
+          <td colspan="6">등록된 월드컵이 없습니다.</td>
+        </tr>
+      `;
+      return;
+    }
+
+    adminWorldcupTableBody.innerHTML = docs.map((docItem) => {
+      const id = getDocumentIdFromName(docItem.name);
+      const fields = docItem.fields || {};
+
+      const title = getStringField(fields, "title", "제목 없음");
+      const category = getStringField(fields, "category", "기타");
+      const candidateCount = getArrayLengthField(fields, "candidates");
+      const playCount = getIntegerField(fields, "playCount", 0);
+      const uploaderName = getStringField(fields, "uploaderName", "알 수 없음");
+
+      return `
+        <tr>
+          <td>${title}</td>
+          <td>${category}</td>
+          <td>${candidateCount}</td>
+          <td>${playCount.toLocaleString()}</td>
+          <td>${uploaderName}</td>
+          <td>
+            <button 
+              type="button" 
+              class="admin-view-btn"
+              onclick="location.href='./worldcup-play.html?id=${id}'"
+            >
+              보기
+            </button>
+          </td>
+        </tr>
+      `;
+    }).join("");
+  } catch (error) {
+    console.error(error);
+
+    if (adminWorldcupCount) {
+      adminWorldcupCount.textContent = "0";
+    }
+
+    adminWorldcupTableBody.innerHTML = `
+      <tr>
+        <td colspan="6">월드컵 데이터를 불러오지 못했습니다.</td>
+      </tr>
+    `;
+  }
+}
+
+function initAdminPage() {
+  if (!adminAccessBox || !location.pathname.includes("admin.html")) return;
+
+  if (!currentUser) {
+    showAdminAccessMessage(
+      "로그인이 필요합니다.",
+      "관리자 페이지는 로그인 후 이용할 수 있습니다."
+    );
+
+    setTimeout(() => {
+      location.href = "./login.html";
+    }, 1000);
+
+    return;
+  }
+
+  if (!isAdminUser(currentUser)) {
+    showAdminAccessMessage(
+      "관리자 권한이 없습니다.",
+      `현재 로그인한 UID: ${currentUser.uid}<br><br>이 UID를 main.js의 ADMIN_UIDS 배열에 추가해야 관리자 페이지를 사용할 수 있습니다.`
+    );
+
+    return;
+  }
+
+  openAdminDashboard();
+}
+
+if (adminRefreshClipsBtn) {
+  adminRefreshClipsBtn.addEventListener("click", loadAdminClips);
+}
+
+if (adminRefreshPeopleBtn) {
+  adminRefreshPeopleBtn.addEventListener("click", loadAdminPeople);
+}
+
+if (adminRefreshWorldcupsBtn) {
+  adminRefreshWorldcupsBtn.addEventListener("click", loadAdminWorldcups);
 }
 
 /* ============================= */
