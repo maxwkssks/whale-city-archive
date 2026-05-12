@@ -17,7 +17,6 @@
 </head>
 <body>
 
-  <!-- 상단 메뉴 -->
   <header class="header">
     <a href="./index.html" class="logo">
       <span class="logo-icon">🐋</span>
@@ -37,7 +36,6 @@
     <button class="login-btn" id="headerLoginBtn">로그인</button>
   </header>
 
-  <!-- 클립 올리기 페이지 -->
   <main class="upload-page">
 
     <section class="upload-card">
@@ -74,14 +72,26 @@
         </label>
 
         <label>
-  썸네일 이미지 주소
-  <input 
-    type="text" 
-    id="uploadThumbnail" 
-    placeholder="./images/clip1.jpg 또는 이미지 URL"
-    required
-  >
-</label>
+          썸네일 이미지 파일
+          <input 
+            type="file" 
+            id="uploadThumbnailFile" 
+            accept="image/*"
+            class="hidden-file-input"
+            required
+          >
+        </label>
+
+        <div class="upload-preview-box">
+          <p>썸네일 미리보기</p>
+
+          <div class="thumbnail-preview-box" id="thumbnailPreviewBox">
+            <img id="thumbnailPreview" src="" alt="썸네일 미리보기">
+            <span id="previewPlaceholder">
+              클릭해서 썸네일 이미지를 선택하세요.
+            </span>
+          </div>
+        </div>
 
         <label>
           영상 타입
@@ -112,12 +122,12 @@
         </label>
 
         <div class="upload-preview-box">
-          <p>썸네일 미리보기</p>
+          <p>클립 카드 미리보기</p>
 
-          <div class="upload-preview">
-            <img id="thumbnailPreview" src="" alt="썸네일 미리보기">
-            <span id="previewPlaceholder">
-              이미지 주소를 입력하면 미리보기가 표시됩니다.
+          <div class="thumbnail-preview-box" id="clipCardPreviewBox">
+            <img id="clipCardThumbnailPreview" src="" alt="클립 카드 미리보기">
+            <span id="clipCardPreviewPlaceholder">
+              썸네일 이미지를 선택하면 여기도 같이 표시됩니다.
             </span>
           </div>
         </div>
@@ -134,7 +144,6 @@
 
   </main>
 
-  <!-- 푸터 -->
   <footer class="footer">
     <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
   </footer>

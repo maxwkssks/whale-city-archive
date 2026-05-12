@@ -781,7 +781,7 @@ async function openClipEditPrompt(clip) {
   const title = prompt("클립 제목을 수정하세요.", clip.title);
   if (title === null) return;
 
-  const tag = prompt("태그를 수정하세요. 예: 레전드, 웃긴장면, 명장면, 사건, 감동", clip.tag);
+  const tag = prompt("태그를 수정하세요. 예: 레전드, 웃긴장면, 명장면, 사건, 감동 , 연애 , 노래 , 선거 , 전투", clip.tag);
   if (tag === null) return;
 
   const thumbnail = prompt("썸네일 이미지 주소를 수정하세요.", clip.thumbnail);
@@ -1240,6 +1240,20 @@ function showMessage(target, text, type) {
   }
 }
 
+
+function normalizeLoginId(value) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function makeAuthEmailFromLoginId(loginId) {
+  return `${normalizeLoginId(loginId)}@whalecity.local`;
+}
+
+function isValidLoginId(loginId) {
+  const loginIdRegex = /^[a-z0-9_]+$/;
+  return loginIdRegex.test(loginId);
+}
+
 function logoutUser() {
   signOut(auth)
     .then(() => {
@@ -1280,9 +1294,9 @@ function setupLoginDropdown(user) {
     dropdown.className = "login-dropdown";
 
     dropdown.innerHTML = `
-      <button type="button" id="uploadClipBtn">클립 올리기</button>
-      <button type="button" id="uploadPersonBtn">프로필 올리기</button>
-      <button type="button" class="logout-option" id="logoutBtn">로그아웃</button>
+      <button type="button" class="logout-option" id="logoutBtn">
+        로그아웃
+      </button>
     `;
 
     loginArea.appendChild(dropdown);
@@ -1292,28 +1306,24 @@ function setupLoginDropdown(user) {
       dropdown.classList.toggle("show");
     };
 
-    const uploadClipBtn = document.querySelector("#uploadClipBtn");
-    const uploadPersonBtn = document.querySelector("#uploadPersonBtn");
-    const logoutBtn = document.querySelector("#logoutBtn");
-
-    if (uploadClipBtn) {
-      uploadClipBtn.addEventListener("click", () => {
-        location.href = "./upload.html";
-      });
-    }
-
-    if (uploadPersonBtn) {
-      uploadPersonBtn.addEventListener("click", () => {
-        location.href = "./people-upload.html";
-      });
-    }
+    const logoutBtn = dropdown.querySelector("#logoutBtn");
 
     if (logoutBtn) {
-      logoutBtn.addEventListener("click", () => {
+      logoutBtn.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+
         const confirmLogout = confirm("로그아웃할까요?");
 
-        if (confirmLogout) {
-          logoutUser();
+        if (!confirmLogout) return;
+
+        try {
+          await signOut(auth);
+          alert("로그아웃되었습니다.");
+          location.href = "./index.html";
+        } catch (error) {
+          console.error("로그아웃 실패:", error);
+          alert("로그아웃 실패: " + error.message);
         }
       });
     }
@@ -1391,12 +1401,23 @@ if (signupForm) {
     event.preventDefault();
 
     const nickname = document.querySelector("#signupNickname").value.trim();
-    const email = document.querySelector("#signupEmail").value.trim();
+    const loginId = normalizeLoginId(document.querySelector("#signupLoginId").value);
+    const email = makeAuthEmailFromLoginId(loginId);
     const password = document.querySelector("#signupPassword").value;
     const passwordCheck = document.querySelector("#signupPasswordCheck").value;
 
     if (nickname.length < 2) {
       showMessage(signupMessage, "닉네임은 2자 이상 입력해주세요.", "error");
+      return;
+    }
+
+    if (loginId.length < 4) {
+      showMessage(signupMessage, "아이디는 4자 이상 입력해주세요.", "error");
+      return;
+    }
+
+    if (!isValidLoginId(loginId)) {
+      showMessage(signupMessage, "아이디는 영문 소문자, 숫자, 밑줄(_)만 사용할 수 있습니다.", "error");
       return;
     }
 
@@ -1420,26 +1441,27 @@ if (signupForm) {
       await setDoc(doc(db, "users", userCredential.user.uid), {
         uid: userCredential.user.uid,
         nickname,
-        email,
+        loginId,
+        authEmail: email,
         createdAt: serverTimestamp()
       });
 
-      showMessage(signupMessage, "회원가입이 완료되었습니다.", "success");
+      showMessage(signupMessage, "회원가입이 완료되었습니다! 홈 화면으로 이동합니다.", "success");
 
       setTimeout(() => {
         location.href = "./index.html";
-      }, 800);
+      }, 1200);
     } catch (error) {
-      console.error(error);
+      console.error("회원가입 실패:", error);
 
       let message = "회원가입 중 오류가 발생했습니다.";
 
       if (error.code === "auth/email-already-in-use") {
-        message = "이미 가입된 이메일입니다. 로그인하거나 다른 이메일을 사용해주세요.";
+        message = "이미 사용 중인 아이디입니다. 다른 아이디를 사용해주세요.";
       }
 
       if (error.code === "auth/invalid-email") {
-        message = "이메일 형식이 올바르지 않습니다.";
+        message = "아이디 형식이 올바르지 않습니다.";
       }
 
       if (error.code === "auth/weak-password") {
@@ -1460,19 +1482,30 @@ if (loginForm) {
   loginForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const email = document.querySelector("#loginEmail").value.trim();
+    const loginId = normalizeLoginId(document.querySelector("#loginEmail").value);
+    const email = makeAuthEmailFromLoginId(loginId);
     const password = document.querySelector("#loginPassword").value;
+
+    if (!loginId) {
+      showMessage(loginMessage, "아이디를 입력해주세요.", "error");
+      return;
+    }
+
+    if (!isValidLoginId(loginId)) {
+      showMessage(loginMessage, "아이디는 영문 소문자, 숫자, 밑줄(_)만 사용할 수 있습니다.", "error");
+      return;
+    }
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
 
-      showMessage(loginMessage, "로그인 성공! 메인 페이지로 이동합니다.", "success");
+      showMessage(loginMessage, "로그인 성공! 홈 화면으로 이동합니다.", "success");
 
       setTimeout(() => {
         location.href = "./index.html";
-      }, 800);
+      }, 1000);
     } catch (error) {
-      console.error(error);
+      console.error("로그인 실패:", error);
 
       let message = "로그인에 실패했습니다.";
 
@@ -1481,11 +1514,11 @@ if (loginForm) {
         error.code === "auth/user-not-found" ||
         error.code === "auth/wrong-password"
       ) {
-        message = "이메일 또는 비밀번호가 올바르지 않습니다.";
+        message = "아이디 또는 비밀번호가 올바르지 않습니다.";
       }
 
       if (error.code === "auth/invalid-email") {
-        message = "이메일 형식이 올바르지 않습니다.";
+        message = "아이디 형식이 올바르지 않습니다.";
       }
 
       if (error.code === "auth/network-request-failed") {
@@ -1503,24 +1536,103 @@ if (loginForm) {
 
 const uploadClipForm = document.querySelector("#uploadClipForm");
 const uploadMessage = document.querySelector("#uploadMessage");
-const uploadThumbnail = document.querySelector("#uploadThumbnail");
+
+const uploadThumbnailFile = document.querySelector("#uploadThumbnailFile");
+const thumbnailPreviewBox = document.querySelector("#thumbnailPreviewBox");
 const thumbnailPreview = document.querySelector("#thumbnailPreview");
 const previewPlaceholder = document.querySelector("#previewPlaceholder");
 
-if (uploadThumbnail && thumbnailPreview && previewPlaceholder) {
-  uploadThumbnail.addEventListener("input", () => {
-    const imageUrl = uploadThumbnail.value.trim();
+const clipCardThumbnailPreview = document.querySelector("#clipCardThumbnailPreview");
+const clipCardPreviewPlaceholder = document.querySelector("#clipCardPreviewPlaceholder");
 
-    if (!imageUrl) {
-      thumbnailPreview.style.display = "none";
-      previewPlaceholder.style.display = "block";
-      thumbnailPreview.src = "";
+let selectedThumbnailDataUrl = "";
+
+function convertImageFileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error("이미지 파일이 없습니다."));
       return;
     }
 
-    thumbnailPreview.src = imageUrl;
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("이미지 파일만 업로드할 수 있습니다."));
+      return;
+    }
+
+    const maxSize = 1024 * 1024;
+
+    if (file.size > maxSize) {
+      reject(new Error("썸네일 이미지는 1MB 이하로 올려주세요."));
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+
+    reader.onerror = () => {
+      reject(new Error("이미지 파일을 읽지 못했습니다."));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+if (thumbnailPreviewBox && uploadThumbnailFile) {
+  thumbnailPreviewBox.addEventListener("click", () => {
+    uploadThumbnailFile.click();
+  });
+}
+
+function resetThumbnailPreviews() {
+  selectedThumbnailDataUrl = "";
+
+  if (thumbnailPreview && previewPlaceholder) {
+    thumbnailPreview.src = "";
+    thumbnailPreview.style.display = "none";
+    previewPlaceholder.style.display = "block";
+  }
+
+  if (clipCardThumbnailPreview && clipCardPreviewPlaceholder) {
+    clipCardThumbnailPreview.src = "";
+    clipCardThumbnailPreview.style.display = "none";
+    clipCardPreviewPlaceholder.style.display = "block";
+  }
+}
+
+function showThumbnailPreviews(imageDataUrl) {
+  if (thumbnailPreview && previewPlaceholder) {
+    thumbnailPreview.src = imageDataUrl;
     thumbnailPreview.style.display = "block";
     previewPlaceholder.style.display = "none";
+  }
+
+  if (clipCardThumbnailPreview && clipCardPreviewPlaceholder) {
+    clipCardThumbnailPreview.src = imageDataUrl;
+    clipCardThumbnailPreview.style.display = "block";
+    clipCardPreviewPlaceholder.style.display = "none";
+  }
+}
+
+if (uploadThumbnailFile && thumbnailPreview && previewPlaceholder) {
+  uploadThumbnailFile.addEventListener("change", async () => {
+    const file = uploadThumbnailFile.files[0];
+
+    if (!file) {
+      resetThumbnailPreviews();
+      return;
+    }
+
+    try {
+      selectedThumbnailDataUrl = await convertImageFileToDataUrl(file);
+      showThumbnailPreviews(selectedThumbnailDataUrl);
+    } catch (error) {
+      uploadThumbnailFile.value = "";
+      resetThumbnailPreviews();
+      alert(error.message);
+    }
   });
 }
 
@@ -1605,7 +1717,7 @@ if (uploadClipForm) {
 
     const title = document.querySelector("#uploadTitle").value.trim();
     const tag = document.querySelector("#uploadTag").value;
-    const thumbnail = document.querySelector("#uploadThumbnail").value.trim();
+    const thumbnail = selectedThumbnailDataUrl;
     const videoType = document.querySelector("#uploadVideoType").value;
     const videoUrl = document.querySelector("#uploadVideoUrl").value.trim();
     const description = document.querySelector("#uploadDescription").value.trim();
@@ -1666,9 +1778,12 @@ if (uploadClipForm) {
 const uploadPersonForm = document.querySelector("#uploadPersonForm");
 const personUploadMessage = document.querySelector("#personUploadMessage");
 
-const personProfileImage = document.querySelector("#personProfileImage");
+const personProfileImageFile = document.querySelector("#personProfileImageFile");
+const personProfilePreviewBox = document.querySelector("#personProfilePreviewBox");
 const personProfilePreview = document.querySelector("#personProfilePreview");
 const personPreviewPlaceholder = document.querySelector("#personPreviewPlaceholder");
+
+let selectedPersonProfileDataUrl = "";
 
 const personTypeSelect = document.querySelector("#personType");
 const gangNameBox = document.querySelector("#gangNameBox");
@@ -1708,20 +1823,73 @@ if (personGangName && customGangNameBox && customGangName) {
   });
 }
 
-if (personProfileImage && personProfilePreview && personPreviewPlaceholder) {
-  personProfileImage.addEventListener("input", () => {
-    const imageUrl = personProfileImage.value.trim();
-
-    if (!imageUrl) {
-      personProfilePreview.style.display = "none";
-      personPreviewPlaceholder.style.display = "block";
-      personProfilePreview.src = "";
+function convertProfileImageFileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) {
+      reject(new Error("이미지 파일이 없습니다."));
       return;
     }
 
-    personProfilePreview.src = imageUrl;
-    personProfilePreview.style.display = "block";
-    personPreviewPlaceholder.style.display = "none";
+    if (!file.type.startsWith("image/")) {
+      reject(new Error("이미지 파일만 업로드할 수 있습니다."));
+      return;
+    }
+
+    const maxSize = 1024 * 1024;
+
+    if (file.size > maxSize) {
+      reject(new Error("프로필 이미지는 1MB 이하로 올려주세요."));
+      return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      resolve(reader.result);
+    };
+
+    reader.onerror = () => {
+      reject(new Error("이미지 파일을 읽지 못했습니다."));
+    };
+
+    reader.readAsDataURL(file);
+  });
+}
+
+if (personProfilePreviewBox && personProfileImageFile) {
+  personProfilePreviewBox.addEventListener("click", () => {
+    personProfileImageFile.click();
+  });
+}
+
+if (personProfileImageFile && personProfilePreview && personPreviewPlaceholder) {
+  personProfileImageFile.addEventListener("change", async () => {
+    const file = personProfileImageFile.files[0];
+
+    if (!file) {
+      selectedPersonProfileDataUrl = "";
+      personProfilePreview.src = "";
+      personProfilePreview.style.display = "none";
+      personPreviewPlaceholder.style.display = "block";
+      return;
+    }
+
+    try {
+      selectedPersonProfileDataUrl = await convertProfileImageFileToDataUrl(file);
+
+      personProfilePreview.src = selectedPersonProfileDataUrl;
+      personProfilePreview.style.display = "block";
+      personPreviewPlaceholder.style.display = "none";
+    } catch (error) {
+      selectedPersonProfileDataUrl = "";
+      personProfileImageFile.value = "";
+
+      personProfilePreview.src = "";
+      personProfilePreview.style.display = "none";
+      personPreviewPlaceholder.style.display = "block";
+
+      alert(error.message);
+    }
   });
 }
 
@@ -1783,7 +1951,7 @@ if (uploadPersonForm) {
 
     const name = document.querySelector("#personName").value.trim();
     const followers = document.querySelector("#personFollowers").value.trim();
-    const profileImage = document.querySelector("#personProfileImage").value.trim();
+    const profileImage = selectedPersonProfileDataUrl;
     const description = document.querySelector("#personDescription").value.trim();
     const team = document.querySelector("#personTeam").value.trim();
     const role = document.querySelector("#personRole").value.trim();

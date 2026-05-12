@@ -27,7 +27,7 @@
       <a href="./index.html">홈</a>
       <a href="./clips.html" class="active">클립</a>
       <a href="./index.html#hotclips">핫클립</a>
-      <a href="#">월드컵</a>
+      <a href="./worldcups.html">월드컵</a>
       <a href="./people.html">인물</a>
       <a href="./index.html#events">사건기록</a>
       <a href="./admin.html">관리자</a>
@@ -36,14 +36,23 @@
     <button class="login-btn" id="headerLoginBtn">로그인</button>
   </header>
 
-  <main class="page">
-    <section class="page-hero">
-      <p class="hero-subtitle">WHALE CITY CLIPS</p>
+ <div class="section-title clips-title-row">
+  <div class="clips-title-inner">
+    <p class="hero-subtitle">WHALE CITY CLIPS</p>
+
+    <div class="clips-title-main">
       <h1>클립 모아보기</h1>
-      <p>
-        고래시티의 웃긴 장면, 명장면, 사건, 감동 장면을 한곳에서 찾아보세요.
-      </p>
-    </section>
+
+      <button type="button" class="clip-upload-page-btn" onclick="location.href='./upload.html'">
+        클립 올리기
+      </button>
+    </div>
+
+    <p>
+      고래시티의 웃긴 장면, 명장면, 사건, 감동 장면을 한곳에서 찾아보세요.
+    </p>
+  </div>
+</div>
 
     <section class="filter-box">
       <input 
@@ -52,13 +61,19 @@
         placeholder="클립 제목이나 태그를 검색하세요"
       />
 
-      <div class="filter-buttons">
-        <button class="filter-btn active" data-tag="전체">전체</button>
-        <button class="filter-btn" data-tag="레전드">레전드</button>
-        <button class="filter-btn" data-tag="웃긴장면">웃긴장면</button>
-        <button class="filter-btn" data-tag="명장면">명장면</button>
-        <button class="filter-btn" data-tag="사건">사건</button>
-        <button class="filter-btn" data-tag="감동">감동</button>
+      <div class="filter-group">
+  <button class="filter-btn active" data-tag="전체">전체</button>
+  <button class="filter-btn" data-tag="레전드">레전드</button>
+  <button class="filter-btn" data-tag="웃긴장면">웃긴장면</button>
+  <button class="filter-btn" data-tag="명장면">명장면</button>
+  <button class="filter-btn" data-tag="사건">사건</button>
+  <button class="filter-btn" data-tag="감동">감동</button>
+  <button class="filter-btn" data-tag="연애">연애</button>
+  <button class="filter-btn" data-tag="노래">노래</button>
+  <button class="filter-btn" data-tag="선거">선거</button>
+  <button class="filter-btn" data-tag="전투">전투</button>
+</div>
+
       </div>
 
       <select id="sortSelect">

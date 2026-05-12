@@ -47,20 +47,32 @@
       </div>
 
       <div class="auth-tabs">
-        <button class="auth-tab active" id="loginTab">로그인</button>
-        <button class="auth-tab" id="signupTab">회원가입</button>
+        <button class="auth-tab active" id="loginTab" type="button">로그인</button>
+        <button class="auth-tab" id="signupTab" type="button">회원가입</button>
       </div>
 
       <!-- 로그인 폼 -->
       <form class="auth-form" id="loginForm">
         <label>
-          이메일
-          <input type="email" id="loginEmail" placeholder="example@email.com" required>
+          아이디
+          <input 
+            type="text" 
+            id="loginEmail" 
+            placeholder="아이디 입력"
+            autocomplete="username"
+            required
+          >
         </label>
 
         <label>
           비밀번호
-          <input type="password" id="loginPassword" placeholder="비밀번호 입력" required>
+          <input 
+            type="password" 
+            id="loginPassword" 
+            placeholder="비밀번호 입력"
+            autocomplete="current-password"
+            required
+          >
         </label>
 
         <button type="submit" class="auth-submit-btn">로그인</button>
@@ -72,22 +84,46 @@
       <form class="auth-form hidden" id="signupForm">
         <label>
           닉네임
-          <input type="text" id="signupNickname" placeholder="닉네임 입력" required>
+          <input 
+            type="text" 
+            id="signupNickname" 
+            placeholder="닉네임 입력"
+            autocomplete="nickname"
+            required
+          >
         </label>
 
         <label>
-          이메일
-          <input type="email" id="signupEmail" placeholder="example@email.com" required>
+          아이디
+          <input 
+            type="text" 
+            id="signupLoginId" 
+            placeholder="예: max0724_"
+            autocomplete="username"
+            required
+          >
         </label>
 
         <label>
           비밀번호
-          <input type="password" id="signupPassword" placeholder="비밀번호 6자 이상" required>
+          <input 
+            type="password" 
+            id="signupPassword" 
+            placeholder="비밀번호 6자 이상"
+            autocomplete="new-password"
+            required
+          >
         </label>
 
         <label>
           비밀번호 확인
-          <input type="password" id="signupPasswordCheck" placeholder="비밀번호 다시 입력" required>
+          <input 
+            type="password" 
+            id="signupPasswordCheck" 
+            placeholder="비밀번호 다시 입력"
+            autocomplete="new-password"
+            required
+          >
         </label>
 
         <button type="submit" class="auth-submit-btn">회원가입</button>

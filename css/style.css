@@ -2369,3 +2369,352 @@ html {
     align-items: flex-start;
   }
 }
+
+.thumbnail-preview-box {
+  height: 220px;
+  border-radius: 20px;
+  background: rgba(6, 21, 37, 0.75);
+  border: 1px dashed rgba(116, 215, 255, 0.35);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8ea3b8;
+  text-align: center;
+  padding: 20px;
+}
+
+.thumbnail-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  border-radius: 16px;
+}
+
+.hidden-file-input {
+  display: none;
+}
+
+.thumbnail-preview-box {
+  height: 220px;
+  border-radius: 20px;
+  background: rgba(6, 21, 37, 0.75);
+  border: 1px dashed rgba(116, 215, 255, 0.35);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8ea3b8;
+  text-align: center;
+  padding: 20px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.thumbnail-preview-box:hover {
+  border-color: rgba(116, 215, 255, 0.8);
+  background: rgba(8, 31, 55, 0.9);
+  box-shadow: 0 0 20px rgba(116, 215, 255, 0.12);
+}
+
+.thumbnail-preview-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: none;
+  border-radius: 16px;
+}
+/* ============================= */
+/* 클립 페이지 제목 + 업로드 버튼 중앙 정렬 */
+/* ============================= */
+
+.clips-title-row {
+  max-width: 860px;
+  margin: 0 auto 28px;
+  text-align: center;
+  display: block;
+}
+
+.clips-title-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clips-title-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.clips-title-main h1 {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.2;
+}
+
+.clips-title-inner > p:last-child {
+  margin-top: 12px;
+  color: #c8d8e8;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.clip-upload-page-btn {
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
+  transition: 0.2s;
+}
+
+.clip-upload-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+}
+
+/* ============================= */
+/* 클립 검색/필터 박스 중앙 정렬 */
+/* ============================= */
+
+.filter-box {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ============================= */
+/* 클립 태그 필터 버튼 정리 */
+/* ============================= */
+
+.filter-buttons,
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-btn {
+  min-height: 34px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(8, 31, 55, 0.8);
+  color: #d9ecff;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-btn:hover {
+  background: rgba(116, 215, 255, 0.16);
+  border-color: rgba(116, 215, 255, 0.8);
+  color: #74d7ff;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .clips-title-row {
+    padding: 0 18px;
+  }
+
+  .clips-title-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .clips-title-main h1 {
+    font-size: 34px;
+  }
+
+  .clip-upload-page-btn {
+    width: 100%;
+    max-width: 240px;
+  }
+}
+/* ============================= */
+/* 인물 페이지 제목 + 프로필 올리기 버튼 중앙 정렬 */
+/* ============================= */
+
+.people-title-row {
+  max-width: 860px;
+  margin: 0 auto 28px;
+  text-align: center;
+  display: block;
+}
+
+.people-title-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.people-title-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.people-title-main h1 {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.2;
+}
+
+.people-title-inner > p:last-child {
+  margin-top: 12px;
+  color: #c8d8e8;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.people-upload-page-btn {
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
+  transition: 0.2s;
+}
+
+.people-upload-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+}
+
+/* 인물 검색/필터 박스 중앙 정렬 */
+.people-filter-box {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .people-title-row {
+    padding: 0 18px;
+  }
+
+  .people-title-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .people-title-main h1 {
+    font-size: 34px;
+  }
+
+  .people-upload-page-btn {
+    width: 100%;
+    max-width: 240px;
+  }
+}
+/* ============================= */
+/* 인물 페이지 제목 + 프로필 올리기 버튼 */
+/* ============================= */
+
+.people-title-row {
+  max-width: 860px;
+  margin: 0 auto 28px;
+  text-align: center;
+}
+
+.people-title-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.people-title-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.people-title-main h1 {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.2;
+}
+
+.people-title-inner > p:last-child {
+  margin-top: 12px;
+  color: #c8d8e8;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.people-upload-page-btn {
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
+  transition: 0.2s;
+}
+
+.people-upload-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+}
+
+.people-filter-box {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .people-title-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .people-title-main h1 {
+    font-size: 34px;
+  }
+
+  .people-upload-page-btn {
+    width: 100%;
+    max-width: 240px;
+  }
+}
+.profile-preview {
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.profile-preview:hover {
+  border-color: rgba(116, 215, 255, 0.8);
+  background: rgba(8, 31, 55, 0.9);
+  box-shadow: 0 0 20px rgba(116, 215, 255, 0.12);
+}

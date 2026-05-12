@@ -71,26 +71,26 @@
         </label>
 
         <label>
-          프로필 사진 주소
-          <input 
-            type="text" 
-            id="personProfileImage" 
-            placeholder="https://이미지주소.jpg"
-            required
-          >
-        </label>
+  프로필 사진 파일
+  <input 
+    type="file" 
+    id="personProfileImageFile" 
+    accept="image/*"
+    class="hidden-file-input"
+    required
+  >
+</label>
 
-        <div class="upload-preview-box">
-          <p>프로필 미리보기</p>
+<div class="upload-preview-box">
+  <p>프로필 미리보기</p>
 
-          <div class="profile-preview">
-            <img id="personProfilePreview" src="" alt="프로필 미리보기">
-            <span id="personPreviewPlaceholder">
-              프로필 이미지 주소를 입력하면 미리보기가 표시됩니다.
-            </span>
-          </div>
-        </div>
-
+  <div class="profile-preview" id="personProfilePreviewBox">
+    <img id="personProfilePreview" src="" alt="프로필 미리보기">
+    <span id="personPreviewPlaceholder">
+      클릭해서 프로필 이미지를 선택하세요.
+    </span>
+  </div>
+</div>
         <label>
           설명
           <textarea 
