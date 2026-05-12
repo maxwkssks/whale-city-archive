@@ -59,66 +59,9 @@ const defaultClips = [
     videoUrl: "https://vod.sooplive.com/player/193625775/embed?type=catch&showChat=false&mutePlay=false",
     description: "고래시티에서 나온 대표적인 레전드 장면입니다."
   },
-  {
-    id: "2",
-    title: "모두가 터진 웃긴 순간",
-    tag: "웃긴장면",
-    views: 982,
-    likes: 221,
-    date: "2026.05.07",
-    thumbnail: "./images/clip2.jpg",
-    videoType: "youtube",
-    videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-    description: "방송 중 예상치 못한 상황으로 모두가 웃음을 터뜨린 장면입니다."
-  },
-  {
-    id: "3",
-    title: "고래시티 최고의 명장면",
-    tag: "명장면",
-    views: 1842,
-    likes: 512,
-    date: "2026.05.06",
-    thumbnail: "./images/clip3.jpg",
-    videoType: "local",
-    videoUrl: "./videos/sample1.mp4",
-    description: "고래시티의 분위기와 캐릭터들의 매력이 잘 드러난 명장면입니다."
-  },
-  {
-    id: "4",
-    title: "갑자기 벌어진 대형 사건",
-    tag: "사건",
-    views: 2200,
-    likes: 610,
-    date: "2026.05.05",
-    thumbnail: "./images/clip4.jpg",
-    videoType: "soop",
-    videoUrl: "https://vod.sooplive.co.kr/player/139399233/embed?type=catch&showChat=false&mutePlay=false",
-    description: "고래시티 내에서 갑자기 벌어진 큰 사건을 기록한 클립입니다."
-  },
-  {
-    id: "5",
-    title: "생각보다 감동적인 장면",
-    tag: "감동",
-    views: 774,
-    likes: 188,
-    date: "2026.05.04",
-    thumbnail: "./images/clip5.jpg",
-    videoType: "local",
-    videoUrl: "./videos/sample1.mp4",
-    description: "처음에는 평범한 장면처럼 보였지만, 뒤로 갈수록 감동을 주었던 클립입니다."
-  },
-  {
-    id: "6",
-    title: "다시 봐도 웃긴 고래시티 일상",
-    tag: "웃긴장면",
-    views: 1550,
-    likes: 430,
-    date: "2026.05.03",
-    thumbnail: "./images/clip6.jpg",
-    videoType: "local",
-    videoUrl: "./videos/sample1.mp4",
-    description: "고래시티 일상 속에서 나온 자연스러운 웃음 포인트를 담은 클립입니다."
-  }
+  
+  
+  
 ];
 
 /* ============================= */
