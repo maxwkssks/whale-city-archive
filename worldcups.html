@@ -37,13 +37,27 @@
   </header>
 
   <main class="page">
-    <section class="page-hero">
-      <p class="hero-subtitle">WHALE CITY WORLDCUP</p>
+    <section class="page-hero worldcup-title-row">
+  <div class="worldcup-title-inner">
+    <p class="hero-subtitle">WHALE CITY WORLDCUP</p>
+
+    <div class="worldcup-title-main">
       <h1>월드컵 목록</h1>
-      <p>
-        시청자들이 직접 만든 고래시티 월드컵을 플레이해보세요.
-      </p>
-    </section>
+
+      <button 
+        type="button" 
+        class="worldcup-create-page-btn" 
+        onclick="location.href='./worldcup-create.html'"
+      >
+        월드컵 만들기
+      </button>
+    </div>
+
+    <p>
+      시청자들이 직접 만든 고래시티 월드컵을 플레이해보세요.
+    </p>
+  </div>
+</section>
 
     <section class="filter-box">
       <input 
@@ -62,9 +76,7 @@
         <button class="worldcup-filter-btn" data-category="기타">기타</button>
       </div>
 
-      <button class="auth-submit-btn" onclick="location.href='./worldcup-create.html'">
-        월드컵 만들기
-      </button>
+     
     </section>
 
     <section class="section clip-list-section">

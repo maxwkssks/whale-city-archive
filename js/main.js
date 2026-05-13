@@ -499,7 +499,7 @@ const isLiked =
 
     if (editClipBtn) {
       editClipBtn.addEventListener("click", () => {
-        openClipEditPrompt(clip);
+        location.href = `./clip-edit.html?id=${clip.id}`;
       });
     }
 
@@ -985,7 +985,7 @@ function renderPeople() {
       });
 
       if (person) {
-        openPersonEditPrompt(person);
+        location.href = `./people-edit.html?id=${person.id}`;
       }
     });
   });
@@ -1349,7 +1349,18 @@ onAuthStateChanged(auth, (user) => {
   setupLoginDropdown(user);
   renderClipDetail();
   renderPeople();
-  initAdminPage();
+
+  if (typeof initEditPersonPage === "function") {
+    initEditPersonPage();
+  }
+
+  if (typeof initEditClipPage === "function") {
+    initEditClipPage();
+  }
+
+  if (typeof initAdminPage === "function") {
+    initAdminPage();
+  }
 
   if (location.pathname.includes("upload.html") && !user) {
     showMessage(document.querySelector("#uploadMessage"), "로그인 후 클립을 올릴 수 있습니다.", "error");
@@ -1544,6 +1555,7 @@ const previewPlaceholder = document.querySelector("#previewPlaceholder");
 
 const clipCardThumbnailPreview = document.querySelector("#clipCardThumbnailPreview");
 const clipCardPreviewPlaceholder = document.querySelector("#clipCardPreviewPlaceholder");
+const fetchVideoInfoBtn = document.querySelector("#fetchVideoInfoBtn");
 
 let selectedThumbnailDataUrl = "";
 
@@ -1616,6 +1628,64 @@ function showThumbnailPreviews(imageDataUrl) {
   }
 }
 
+async function fetchSoopVideoInfo(videoUrl) {
+  const response = await fetch(`/api/soop-info?url=${encodeURIComponent(videoUrl)}`);
+  const result = await response.json();
+
+  if (!response.ok || !result.ok) {
+    throw new Error(result.message || "SOOP 영상 정보를 가져오지 못했습니다.");
+  }
+
+  return result;
+}
+
+if (fetchVideoInfoBtn) {
+  fetchVideoInfoBtn.addEventListener("click", async () => {
+    const videoTypeSelect = document.querySelector("#uploadVideoType");
+    const videoUrlInput = document.querySelector("#uploadVideoUrl");
+
+    if (!videoTypeSelect || !videoUrlInput) return;
+
+    const videoType = videoTypeSelect.value;
+    const originalVideoUrl = videoUrlInput.value.trim();
+
+    if (!originalVideoUrl) {
+      alert("영상 URL을 먼저 입력해주세요.");
+      return;
+    }
+
+    if (videoType !== "soop") {
+      alert("자동 정보 가져오기는 현재 SOOP 영상만 지원합니다.");
+      return;
+    }
+
+    try {
+      fetchVideoInfoBtn.disabled = true;
+      fetchVideoInfoBtn.textContent = "가져오는 중...";
+
+      const info = await fetchSoopVideoInfo(originalVideoUrl);
+
+      if (info.embedUrl) {
+        videoUrlInput.value = info.embedUrl;
+      }
+
+      if (info.thumbnail) {
+        selectedThumbnailDataUrl = info.thumbnail;
+        showThumbnailPreviews(info.thumbnail);
+      } else {
+        alert("썸네일을 찾지 못했습니다.");
+      }
+    } catch (error) {
+      console.error("SOOP 영상 정보 가져오기 실패:", error);
+      alert(error.message);
+    } finally {
+      fetchVideoInfoBtn.disabled = false;
+      fetchVideoInfoBtn.textContent = "영상 정보 자동 가져오기";
+    }
+  });
+}
+
+
 if (uploadThumbnailFile && thumbnailPreview && previewPlaceholder) {
   uploadThumbnailFile.addEventListener("change", async () => {
     const file = uploadThumbnailFile.files[0];
@@ -1661,42 +1731,70 @@ function getFirestoreErrorMessage(error) {
 }
 
 async function saveClipToFirestoreRest(clipData) {
-  const token = await currentUser.getIdToken();
-
-  const response = await fetch(
-    "https://firestore.googleapis.com/v1/projects/whale-city-archive/databases/default/documents/clips",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        fields: {
-          title: { stringValue: clipData.title },
-          tag: { stringValue: clipData.tag },
-          thumbnail: { stringValue: clipData.thumbnail },
-          videoType: { stringValue: clipData.videoType },
-          videoUrl: { stringValue: clipData.videoUrl },
-          description: { stringValue: clipData.description },
-          views: { integerValue: String(clipData.views) },
-          likes: { integerValue: String(clipData.likes) },
-          uid: { stringValue: clipData.uid },
-          uploaderName: { stringValue: clipData.uploaderName },
-          createdAt: { timestampValue: new Date().toISOString() }
-        }
-      })
-    }
-  );
-
-  const result = await response.json();
-
-  if (!response.ok) {
-    console.error("REST 클립 저장 실패:", result);
-    throw new Error(result.error?.message || "Firestore 클립 저장 실패");
+  if (!currentUser) {
+    throw new Error("로그인 정보가 없습니다.");
   }
 
-  return result;
+  const token = await currentUser.getIdToken(true);
+
+  const controller = new AbortController();
+
+  const timeoutId = setTimeout(() => {
+    controller.abort();
+  }, 15000);
+
+  try {
+    const response = await fetch(
+      "https://firestore.googleapis.com/v1/projects/whale-city-archive/databases/default/documents/clips",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`
+        },
+        signal: controller.signal,
+        body: JSON.stringify({
+          fields: {
+            title: { stringValue: clipData.title },
+            tag: { stringValue: clipData.tag },
+            thumbnail: { stringValue: clipData.thumbnail },
+            videoType: { stringValue: clipData.videoType },
+            videoUrl: { stringValue: clipData.videoUrl },
+            description: { stringValue: clipData.description },
+            views: { integerValue: String(clipData.views) },
+            likes: { integerValue: String(clipData.likes) },
+            likedUsers: {
+              arrayValue: {
+                values: []
+              }
+            },
+            uid: { stringValue: clipData.uid },
+            uploaderName: { stringValue: clipData.uploaderName },
+            createdAt: { timestampValue: new Date().toISOString() }
+          }
+        })
+      }
+    );
+
+    clearTimeout(timeoutId);
+
+    const result = await response.json();
+
+    if (!response.ok) {
+      console.error("REST 클립 저장 실패:", result);
+      throw new Error(result.error?.message || "Firestore 클립 저장 실패");
+    }
+
+    return result;
+  } catch (error) {
+    clearTimeout(timeoutId);
+
+    if (error.name === "AbortError") {
+      throw new Error("저장 요청 시간이 초과되었습니다. 인터넷 연결 또는 Firestore 규칙을 확인해주세요.");
+    }
+
+    throw error;
+  }
 }
 
 if (uploadClipForm) {
@@ -1722,8 +1820,13 @@ if (uploadClipForm) {
     const videoUrl = document.querySelector("#uploadVideoUrl").value.trim();
     const description = document.querySelector("#uploadDescription").value.trim();
 
-    if (!title || !tag || !thumbnail || !videoType || !videoUrl || !description) {
-      showMessage(uploadMessage, "모든 항목을 입력해주세요.", "error");
+    if (!title || !tag || !videoType || !videoUrl || !description) {
+      showMessage(uploadMessage, "클립 정보를 모두 입력해주세요.", "error");
+      return;
+    }
+
+    if (!thumbnail) {
+      showMessage(uploadMessage, "썸네일이 없습니다. SOOP 영상은 영상 정보 자동 가져오기를 먼저 눌러주세요.", "error");
       return;
     }
 
@@ -1745,14 +1848,14 @@ if (uploadClipForm) {
         views: 0,
         likes: 0,
         uid: currentUser.uid,
-        uploaderName: currentUser.displayName || currentUser.email
+        uploaderName: currentUser.displayName || currentUser.email.split("@")[0]
       };
 
       const result = await saveClipToFirestoreRest(clipData);
 
-      console.log("클립 등록 성공:", result.name);
+      console.log("클립 등록 성공:", result);
 
-      showMessage(uploadMessage, "클립이 등록되었습니다! 이동합니다.", "success");
+      showMessage(uploadMessage, "클립이 등록되었습니다! 클립 목록으로 이동합니다.", "success");
 
       setTimeout(() => {
         location.href = "./clips.html";
@@ -1760,8 +1863,7 @@ if (uploadClipForm) {
     } catch (error) {
       console.error("클립 등록 실패:", error);
 
-      const message = getFirestoreErrorMessage(error);
-      showMessage(uploadMessage, "클립 등록 실패: " + message, "error");
+      showMessage(uploadMessage, "클립 등록 실패: " + error.message, "error");
 
       if (submitButton) {
         submitButton.disabled = false;
@@ -1770,7 +1872,6 @@ if (uploadClipForm) {
     }
   });
 }
-
 /* ============================= */
 /* Firebase 프로필 올리기 */
 /* ============================= */
@@ -2025,6 +2126,519 @@ if (uploadPersonForm) {
     }
   });
 }
+
+
+/* ============================= */
+/* people-edit.html 프로필 수정 페이지 */
+/* ============================= */
+
+const editPersonForm = document.querySelector("#editPersonForm");
+const editPersonMessage = document.querySelector("#editPersonMessage");
+
+const editPersonProfileImageFile = document.querySelector("#editPersonProfileImageFile");
+const editPersonProfilePreviewBox = document.querySelector("#editPersonProfilePreviewBox");
+const editPersonProfilePreview = document.querySelector("#editPersonProfilePreview");
+const editPersonPreviewPlaceholder = document.querySelector("#editPersonPreviewPlaceholder");
+
+const editPersonTypeSelect = document.querySelector("#editPersonType");
+const editGangNameBox = document.querySelector("#editGangNameBox");
+const editPersonGangName = document.querySelector("#editPersonGangName");
+const editCustomGangNameBox = document.querySelector("#editCustomGangNameBox");
+const editCustomGangName = document.querySelector("#editCustomGangName");
+
+let editingPersonId = "";
+let selectedEditPersonProfileDataUrl = "";
+
+function getEditPersonIdFromUrl() {
+  const params = new URLSearchParams(location.search);
+  return params.get("id") || "";
+}
+
+async function fetchPersonById(personId) {
+  const response = await fetch(
+    `https://firestore.googleapis.com/v1/projects/whale-city-archive/databases/default/documents/people/${personId}`
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    console.error("프로필 단일 불러오기 실패:", result);
+    throw new Error(result.error?.message || "프로필 정보를 불러오지 못했습니다.");
+  }
+
+  const fields = result.fields || {};
+
+  return {
+    id: personId,
+    name: fields.name?.stringValue || "",
+    followers: fields.followers?.stringValue || "",
+    profileImage: fields.profileImage?.stringValue || "",
+    description: fields.description?.stringValue || "",
+    team: fields.team?.stringValue || "",
+    role: fields.role?.stringValue || "",
+    type: fields.type?.stringValue || "",
+    gangName: fields.gangName?.stringValue || "",
+    link: fields.link?.stringValue || "",
+    uid: fields.uid?.stringValue || ""
+  };
+}
+
+function showEditPersonPreview(imageUrl) {
+  if (!editPersonProfilePreview || !editPersonPreviewPlaceholder) return;
+
+  if (!imageUrl) {
+    editPersonProfilePreview.src = "";
+    editPersonProfilePreview.style.display = "none";
+    editPersonPreviewPlaceholder.style.display = "block";
+    return;
+  }
+
+  editPersonProfilePreview.src = imageUrl;
+  editPersonProfilePreview.style.display = "block";
+  editPersonPreviewPlaceholder.style.display = "none";
+}
+
+function updateEditGangUI(typeValue, gangNameValue = "") {
+  if (!editGangNameBox || !editPersonGangName) return;
+
+  if (typeValue === "갱") {
+    editGangNameBox.classList.remove("hidden");
+    editPersonGangName.setAttribute("required", "required");
+
+    const defaultGangOptions = ["아자방", "블랙핀", "크라켄", "샤크", "고래파"];
+
+    if (defaultGangOptions.includes(gangNameValue)) {
+      editPersonGangName.value = gangNameValue;
+
+      if (editCustomGangNameBox && editCustomGangName) {
+        editCustomGangNameBox.classList.add("hidden");
+        editCustomGangName.removeAttribute("required");
+        editCustomGangName.value = "";
+      }
+    } else if (gangNameValue) {
+      editPersonGangName.value = "직접입력";
+
+      if (editCustomGangNameBox && editCustomGangName) {
+        editCustomGangNameBox.classList.remove("hidden");
+        editCustomGangName.setAttribute("required", "required");
+        editCustomGangName.value = gangNameValue;
+      }
+    } else {
+      editPersonGangName.value = "";
+    }
+  } else {
+    editGangNameBox.classList.add("hidden");
+    editPersonGangName.removeAttribute("required");
+    editPersonGangName.value = "";
+
+    if (editCustomGangNameBox && editCustomGangName) {
+      editCustomGangNameBox.classList.add("hidden");
+      editCustomGangName.removeAttribute("required");
+      editCustomGangName.value = "";
+    }
+  }
+}
+
+function fillEditPersonForm(person) {
+  const nameInput = document.querySelector("#editPersonName");
+  const followersInput = document.querySelector("#editPersonFollowers");
+  const descriptionInput = document.querySelector("#editPersonDescription");
+  const teamInput = document.querySelector("#editPersonTeam");
+  const roleInput = document.querySelector("#editPersonRole");
+  const typeInput = document.querySelector("#editPersonType");
+  const linkInput = document.querySelector("#editPersonLink");
+
+  if (nameInput) nameInput.value = person.name;
+  if (followersInput) followersInput.value = person.followers;
+  if (descriptionInput) descriptionInput.value = person.description;
+  if (teamInput) teamInput.value = person.team;
+  if (roleInput) roleInput.value = person.role;
+  if (typeInput) typeInput.value = person.type;
+  if (linkInput) linkInput.value = person.link;
+
+  selectedEditPersonProfileDataUrl = person.profileImage;
+  showEditPersonPreview(person.profileImage);
+  updateEditGangUI(person.type, person.gangName);
+}
+
+async function initEditPersonPage() {
+  if (!editPersonForm) return;
+
+  editingPersonId = getEditPersonIdFromUrl();
+
+  if (!editingPersonId) {
+    showMessage(editPersonMessage, "수정할 프로필 ID가 없습니다.", "error");
+    return;
+  }
+
+  if (!currentUser) {
+    showMessage(editPersonMessage, "로그인 후 수정할 수 있습니다.", "error");
+
+    setTimeout(() => {
+      location.href = "./login.html";
+    }, 800);
+
+    return;
+  }
+
+  try {
+    showMessage(editPersonMessage, "프로필 정보를 불러오는 중입니다...", "success");
+
+    const person = await fetchPersonById(editingPersonId);
+
+    if (person.uid && String(person.uid) !== String(currentUser.uid)) {
+      showMessage(editPersonMessage, "본인이 올린 프로필만 수정할 수 있습니다.", "error");
+      return;
+    }
+
+    fillEditPersonForm(person);
+    showMessage(editPersonMessage, "", "");
+  } catch (error) {
+    console.error("프로필 수정 페이지 초기화 실패:", error);
+    showMessage(editPersonMessage, "프로필 정보를 불러오지 못했습니다: " + error.message, "error");
+  }
+}
+
+if (editPersonProfilePreviewBox && editPersonProfileImageFile) {
+  editPersonProfilePreviewBox.addEventListener("click", () => {
+    editPersonProfileImageFile.click();
+  });
+}
+
+if (editPersonProfileImageFile && editPersonProfilePreview && editPersonPreviewPlaceholder) {
+  editPersonProfileImageFile.addEventListener("change", async () => {
+    const file = editPersonProfileImageFile.files[0];
+
+    if (!file) return;
+
+    try {
+      selectedEditPersonProfileDataUrl = await convertProfileImageFileToDataUrl(file);
+      showEditPersonPreview(selectedEditPersonProfileDataUrl);
+    } catch (error) {
+      editPersonProfileImageFile.value = "";
+      alert(error.message);
+    }
+  });
+}
+
+if (editPersonTypeSelect) {
+  editPersonTypeSelect.addEventListener("change", () => {
+    updateEditGangUI(editPersonTypeSelect.value, "");
+  });
+}
+
+if (editPersonGangName && editCustomGangNameBox && editCustomGangName) {
+  editPersonGangName.addEventListener("change", () => {
+    if (editPersonGangName.value === "직접입력") {
+      editCustomGangNameBox.classList.remove("hidden");
+      editCustomGangName.setAttribute("required", "required");
+    } else {
+      editCustomGangNameBox.classList.add("hidden");
+      editCustomGangName.removeAttribute("required");
+      editCustomGangName.value = "";
+    }
+  });
+}
+
+if (editPersonForm) {
+  editPersonForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      showMessage(editPersonMessage, "로그인 후 수정할 수 있습니다.", "error");
+      return;
+    }
+
+    const submitButton = editPersonForm.querySelector("button[type='submit']");
+
+    const name = document.querySelector("#editPersonName").value.trim();
+    const followers = document.querySelector("#editPersonFollowers").value.trim();
+    const profileImage = selectedEditPersonProfileDataUrl;
+    const description = document.querySelector("#editPersonDescription").value.trim();
+    const team = document.querySelector("#editPersonTeam").value.trim();
+    const role = document.querySelector("#editPersonRole").value.trim();
+    const type = document.querySelector("#editPersonType").value;
+    const link = document.querySelector("#editPersonLink").value.trim();
+
+    const selectedGangName = editPersonGangName ? editPersonGangName.value.trim() : "";
+    const customGangNameValue = editCustomGangName ? editCustomGangName.value.trim() : "";
+
+    const gangName =
+      selectedGangName === "직접입력"
+        ? customGangNameValue
+        : selectedGangName;
+
+    if (!name || !followers || !profileImage || !description || !team || !role || !type || !link) {
+      showMessage(editPersonMessage, "모든 항목을 입력해주세요.", "error");
+      return;
+    }
+
+    if (type === "갱" && !gangName) {
+      showMessage(editPersonMessage, "갱 직업군은 갱단 이름을 선택하거나 직접 입력해야 합니다.", "error");
+      return;
+    }
+
+    const updateData = {
+      name,
+      followers,
+      profileImage,
+      description,
+      team,
+      role,
+      type,
+      gangName,
+      link
+    };
+
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "수정 중...";
+      }
+
+      showMessage(editPersonMessage, "프로필 수정 중입니다...", "success");
+
+      await updatePersonToFirestoreRest(editingPersonId, updateData);
+
+      showMessage(editPersonMessage, "프로필이 수정되었습니다! 인물 페이지로 이동합니다.", "success");
+
+      setTimeout(() => {
+        location.href = "./people.html";
+      }, 1000);
+    } catch (error) {
+      console.error("프로필 수정 실패:", error);
+      showMessage(editPersonMessage, "프로필 수정 실패: " + error.message, "error");
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "프로필 수정하기";
+      }
+    }
+  });
+}
+
+
+
+/* ============================= */
+/* clip-edit.html 클립 수정 페이지 */
+/* ============================= */
+
+const editClipForm = document.querySelector("#editClipForm");
+const editClipMessage = document.querySelector("#editClipMessage");
+
+const editClipThumbnailPreview = document.querySelector("#editClipThumbnailPreview");
+const editClipPreviewPlaceholder = document.querySelector("#editClipPreviewPlaceholder");
+const editFetchVideoInfoBtn = document.querySelector("#editFetchVideoInfoBtn");
+
+let editingClipId = "";
+let selectedEditClipThumbnail = "";
+
+function getEditClipIdFromUrl() {
+  const params = new URLSearchParams(location.search);
+  return params.get("id") || "";
+}
+
+async function fetchClipById(clipId) {
+  const response = await fetch(
+    `https://firestore.googleapis.com/v1/projects/whale-city-archive/databases/default/documents/clips/${clipId}`
+  );
+
+  const result = await response.json();
+
+  if (!response.ok) {
+    console.error("클립 단일 불러오기 실패:", result);
+    throw new Error(result.error?.message || "클립 정보를 불러오지 못했습니다.");
+  }
+
+  const fields = result.fields || {};
+
+  return {
+    id: clipId,
+    title: fields.title?.stringValue || "",
+    tag: fields.tag?.stringValue || "",
+    thumbnail: fields.thumbnail?.stringValue || "",
+    videoType: fields.videoType?.stringValue || "",
+    videoUrl: fields.videoUrl?.stringValue || "",
+    description: fields.description?.stringValue || "",
+    uid: fields.uid?.stringValue || ""
+  };
+}
+
+function showEditClipThumbnail(imageUrl) {
+  if (!editClipThumbnailPreview || !editClipPreviewPlaceholder) return;
+
+  if (!imageUrl) {
+    editClipThumbnailPreview.src = "";
+    editClipThumbnailPreview.style.display = "none";
+    editClipPreviewPlaceholder.style.display = "block";
+    return;
+  }
+
+  editClipThumbnailPreview.src = imageUrl;
+  editClipThumbnailPreview.style.display = "block";
+  editClipPreviewPlaceholder.style.display = "none";
+}
+
+function fillEditClipForm(clip) {
+  const titleInput = document.querySelector("#editClipTitle");
+  const tagInput = document.querySelector("#editClipTag");
+  const videoTypeInput = document.querySelector("#editClipVideoType");
+  const videoUrlInput = document.querySelector("#editClipVideoUrl");
+  const descriptionInput = document.querySelector("#editClipDescription");
+
+  if (titleInput) titleInput.value = clip.title;
+  if (tagInput) tagInput.value = clip.tag;
+  if (videoTypeInput) videoTypeInput.value = clip.videoType;
+  if (videoUrlInput) videoUrlInput.value = clip.videoUrl;
+  if (descriptionInput) descriptionInput.value = clip.description;
+
+  selectedEditClipThumbnail = clip.thumbnail;
+  showEditClipThumbnail(clip.thumbnail);
+}
+
+async function initEditClipPage() {
+  if (!editClipForm) return;
+
+  editingClipId = getEditClipIdFromUrl();
+
+  if (!editingClipId) {
+    showMessage(editClipMessage, "수정할 클립 ID가 없습니다.", "error");
+    return;
+  }
+
+  if (!currentUser) {
+    showMessage(editClipMessage, "로그인 후 수정할 수 있습니다.", "error");
+
+    setTimeout(() => {
+      location.href = "./login.html";
+    }, 800);
+
+    return;
+  }
+
+  try {
+    showMessage(editClipMessage, "클립 정보를 불러오는 중입니다...", "success");
+
+    const clip = await fetchClipById(editingClipId);
+
+    if (clip.uid && String(clip.uid) !== String(currentUser.uid)) {
+      showMessage(editClipMessage, "본인이 올린 클립만 수정할 수 있습니다.", "error");
+      return;
+    }
+
+    fillEditClipForm(clip);
+    showMessage(editClipMessage, "", "");
+  } catch (error) {
+    console.error("클립 수정 페이지 초기화 실패:", error);
+    showMessage(editClipMessage, "클립 정보를 불러오지 못했습니다: " + error.message, "error");
+  }
+}
+
+if (editFetchVideoInfoBtn) {
+  editFetchVideoInfoBtn.addEventListener("click", async () => {
+    const videoTypeInput = document.querySelector("#editClipVideoType");
+    const videoUrlInput = document.querySelector("#editClipVideoUrl");
+
+    if (!videoTypeInput || !videoUrlInput) return;
+
+    const videoType = videoTypeInput.value;
+    const originalVideoUrl = videoUrlInput.value.trim();
+
+    if (!originalVideoUrl) {
+      alert("영상 URL을 먼저 입력해주세요.");
+      return;
+    }
+
+    if (videoType !== "soop") {
+      alert("SOOP 영상만 자동 가져오기를 지원합니다.");
+      return;
+    }
+
+    try {
+      editFetchVideoInfoBtn.disabled = true;
+      editFetchVideoInfoBtn.textContent = "가져오는 중...";
+
+      const info = await fetchSoopVideoInfo(originalVideoUrl);
+
+      if (info.embedUrl) {
+        videoUrlInput.value = info.embedUrl;
+      }
+
+      if (info.thumbnail) {
+        selectedEditClipThumbnail = info.thumbnail;
+        showEditClipThumbnail(info.thumbnail);
+      } else {
+        alert("썸네일을 찾지 못했습니다.");
+      }
+    } catch (error) {
+      console.error("SOOP 영상 정보 가져오기 실패:", error);
+      alert(error.message);
+    } finally {
+      editFetchVideoInfoBtn.disabled = false;
+      editFetchVideoInfoBtn.textContent = "SOOP 영상 정보 다시 가져오기";
+    }
+  });
+}
+
+if (editClipForm) {
+  editClipForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    if (!currentUser) {
+      showMessage(editClipMessage, "로그인 후 수정할 수 있습니다.", "error");
+      return;
+    }
+
+    const submitButton = editClipForm.querySelector("button[type='submit']");
+
+    const title = document.querySelector("#editClipTitle").value.trim();
+    const tag = document.querySelector("#editClipTag").value;
+    const thumbnail = selectedEditClipThumbnail;
+    const videoType = document.querySelector("#editClipVideoType").value;
+    const videoUrl = document.querySelector("#editClipVideoUrl").value.trim();
+    const description = document.querySelector("#editClipDescription").value.trim();
+
+    if (!title || !tag || !thumbnail || !videoType || !videoUrl || !description) {
+      showMessage(editClipMessage, "모든 항목을 입력해주세요.", "error");
+      return;
+    }
+
+    const updateData = {
+      title,
+      tag,
+      thumbnail,
+      videoType,
+      videoUrl,
+      description
+    };
+
+    try {
+      if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.textContent = "수정 중...";
+      }
+
+      showMessage(editClipMessage, "클립 수정 중입니다...", "success");
+
+      await updateClipToFirestoreRest(editingClipId, updateData);
+
+      showMessage(editClipMessage, "클립이 수정되었습니다! 상세 페이지로 이동합니다.", "success");
+
+      setTimeout(() => {
+        location.href = `./clip-detail.html?id=${editingClipId}`;
+      }, 1000);
+    } catch (error) {
+      console.error("클립 수정 실패:", error);
+      showMessage(editClipMessage, "클립 수정 실패: " + error.message, "error");
+
+      if (submitButton) {
+        submitButton.disabled = false;
+        submitButton.textContent = "클립 수정하기";
+      }
+    }
+  });
+}
+
 
 /* ============================= */
 /* Firebase 월드컵 만들기 / 목록 */

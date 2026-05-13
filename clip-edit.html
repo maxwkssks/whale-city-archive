@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>클립 수정 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html" class="active">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="./worldcups.html">월드컵</a>
+      <a href="./people.html">인물</a>
+      <a href="./index.html#events">사건기록</a>
+      <a href="./admin.html">관리자</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="upload-page">
+    <section class="upload-card">
+      <div class="auth-title">
+        <p class="hero-subtitle">UPDATE CLIP</p>
+        <h1>클립 수정하기</h1>
+        <p>처음 등록했던 클립 정보를 수정하세요.</p>
+      </div>
+
+      <form class="upload-form" id="editClipForm">
+        <label>
+          클립 제목
+          <input type="text" id="editClipTitle" placeholder="예: 고래시티 레전드 장면" required>
+        </label>
+
+        <label>
+          태그
+          <select id="editClipTag" required>
+            <option value="레전드">레전드</option>
+            <option value="웃긴장면">웃긴장면</option>
+            <option value="명장면">명장면</option>
+            <option value="사건">사건</option>
+            <option value="감동">감동</option>
+            <option value="연애">연애</option>
+            <option value="노래">노래</option>
+            <option value="선거">선거</option>
+            <option value="전투">전투</option>
+          </select>
+        </label>
+
+        <label>
+          영상 타입
+          <select id="editClipVideoType" required>
+            <option value="soop">SOOP</option>
+            <option value="youtube">YouTube</option>
+            <option value="local">MP4 파일</option>
+          </select>
+        </label>
+
+        <label>
+          영상 URL
+          <input type="text" id="editClipVideoUrl" placeholder="SOOP embed 주소 / YouTube embed 주소 / ./videos/sample.mp4" required>
+        </label>
+
+        <button type="button" class="fetch-video-info-btn" id="editFetchVideoInfoBtn">
+          SOOP 영상 정보 다시 가져오기
+        </button>
+
+        <div class="upload-preview-box">
+          <p>썸네일 미리보기</p>
+
+          <div class="thumbnail-preview-box" id="editClipThumbnailPreviewBox">
+            <img id="editClipThumbnailPreview" src="" alt="썸네일 미리보기">
+            <span id="editClipPreviewPlaceholder">
+              기존 썸네일 또는 새로 가져온 썸네일이 표시됩니다.
+            </span>
+          </div>
+        </div>
+
+        <label>
+          클립 설명
+          <textarea id="editClipDescription" placeholder="클립에 대한 설명을 입력하세요." required></textarea>
+        </label>
+
+        <button type="submit" class="auth-submit-btn">클립 수정하기</button>
+        <p class="auth-message" id="editClipMessage"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>

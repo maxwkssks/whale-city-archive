@@ -2426,14 +2426,349 @@ html {
   border-radius: 16px;
 }
 /* ============================= */
-/* 클립 페이지 제목 + 업로드 버튼 중앙 정렬 */
+/* 클립 페이지 제목 + 업로드 버튼 */
+/* ============================= */
+
+.clips-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 20px;
+}
+
+.clip-upload-page-btn {
+  padding: 13px 22px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  font-size: 14px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
+  transition: 0.2s;
+}
+
+.clip-upload-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+}
+
+/* ============================= */
+/* 클립 태그 필터 버튼 정리 */
+/* ============================= */
+
+.filter-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.filter-btn {
+  min-height: 34px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(8, 31, 55, 0.8);
+  color: #d9ecff;
+  border: 1px solid rgba(116, 215, 255, 0.35);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.filter-btn:hover {
+  background: rgba(116, 215, 255, 0.16);
+  border-color: rgba(116, 215, 255, 0.8);
+  color: #74d7ff;
+}
+
+.filter-btn.active {
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border-color: transparent;
+}
+
+@media (max-width: 768px) {
+  .clips-title-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .clip-upload-page-btn {
+    width: 100%;
+  }
+}
+
+
+/* ============================= */
+/* SOOP 영상 정보 자동 가져오기 버튼 */
+/* ============================= */
+
+.fetch-video-info-btn {
+  height: 48px;
+  border-radius: 14px;
+  background: rgba(116, 215, 255, 0.16);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.4);
+  font-size: 14px;
+  font-weight: 900;
+  transition: 0.2s;
+}
+
+.fetch-video-info-btn:hover {
+  transform: translateY(-2px);
+  background: rgba(116, 215, 255, 0.24);
+  border-color: rgba(116, 215, 255, 0.7);
+}
+
+.fetch-video-info-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ============================= */
+/* 클립 / 인물 페이지 제목 영역 정리 */
+/* ============================= */
+
+.clips-title-row,
+.people-title-row {
+  max-width: 860px;
+  margin: 0 auto 34px;
+  padding-top: 24px;
+  text-align: center;
+}
+
+.clips-title-inner,
+.people-title-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.clips-title-main,
+.people-title-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.clips-title-main h1,
+.people-title-main h1 {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.2;
+}
+
+.clips-title-inner > p:last-child,
+.people-title-inner > p:last-child {
+  margin-top: 12px;
+  color: #c8d8e8;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.clip-upload-page-btn,
+.people-upload-page-btn {
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
+  transition: 0.2s;
+}
+
+.clip-upload-page-btn:hover,
+.people-upload-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+}
+
+/* 검색 박스도 제목과 폭 맞추기 */
+.filter-box,
+.people-filter-box {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .clips-title-row,
+  .people-title-row {
+    padding: 20px 18px 0;
+  }
+
+  .clips-title-main,
+  .people-title-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .clips-title-main h1,
+  .people-title-main h1 {
+    font-size: 34px;
+  }
+
+  .clip-upload-page-btn,
+  .people-upload-page-btn {
+    width: 100%;
+    max-width: 240px;
+  }
+}
+/* ============================= */
+/* clips.html 전체 중앙 정렬 보정 */
 /* ============================= */
 
 .clips-title-row {
   max-width: 860px;
   margin: 0 auto 28px;
   text-align: center;
-  display: block;
+}
+
+.filter-box {
+  max-width: 860px;
+  margin: 0 auto 48px;
+}
+
+.clip-list-section {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.clip-list-section .section-title {
+  max-width: 860px;
+  margin: 0 auto 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#clipList.clip-grid,
+.clip-grid {
+  max-width: 860px;
+  margin: 0 auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .clip-list-section,
+  .filter-box,
+  .clips-title-row,
+  #clipList.clip-grid,
+  .clip-grid {
+    max-width: 100%;
+  }
+
+  #clipList.clip-grid,
+  .clip-grid {
+    grid-template-columns: 1fr;
+  }
+}
+/* ============================= */
+/* 월드컵 페이지 제목 + 만들기 버튼 중앙 정렬 */
+/* ============================= */
+
+.worldcup-title-row {
+  max-width: 860px;
+  margin: 0 auto 34px;
+  padding-top: 24px;
+  text-align: center;
+}
+
+.worldcup-title-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.worldcup-title-main {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.worldcup-title-main h1 {
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.2;
+}
+
+.worldcup-title-inner > p:last-child {
+  margin-top: 12px;
+  color: #c8d8e8;
+  font-size: 17px;
+  line-height: 1.7;
+}
+
+.worldcup-create-page-btn {
+  padding: 11px 18px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #38bdf8, #2563eb);
+  color: #ffffff;
+  border: none;
+  font-size: 13px;
+  font-weight: 900;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
+  transition: 0.2s;
+}
+
+.worldcup-create-page-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+}
+
+/* 월드컵 검색 박스도 중앙 정렬 */
+.worldcup-filter-box,
+.filter-box {
+  max-width: 860px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .worldcup-title-row {
+    padding: 20px 18px 0;
+  }
+
+  .worldcup-title-main {
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .worldcup-title-main h1 {
+    font-size: 34px;
+  }
+
+  .worldcup-create-page-btn {
+    width: 100%;
+    max-width: 240px;
+  }
+}
+/* ============================= */
+/* 클립 페이지 제목 + 올리기 버튼 중앙 정렬 */
+/* ============================= */
+
+.clips-title-row {
+  max-width: 860px;
+  margin: 0 auto 34px;
+  padding-top: 24px;
+  text-align: center;
 }
 
 .clips-title-inner {
@@ -2482,56 +2817,38 @@ html {
   box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
 }
 
-/* ============================= */
-/* 클립 검색/필터 박스 중앙 정렬 */
-/* ============================= */
-
+/* 클립 검색 박스 중앙 정렬 */
 .filter-box {
   max-width: 860px;
   margin-left: auto;
   margin-right: auto;
 }
 
-/* ============================= */
-/* 클립 태그 필터 버튼 정리 */
-/* ============================= */
+/* 전체 클립 영역도 검색 박스 폭에 맞추기 */
+.clip-list-section {
+  max-width: 860px;
+  margin: 0 auto;
+  padding-left: 0;
+  padding-right: 0;
+}
 
-.filter-buttons,
-.filter-group {
+.clip-list-section .section-title {
+  max-width: 860px;
+  margin: 0 auto 22px;
   display: flex;
-  flex-wrap: wrap;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
 }
 
-.filter-btn {
-  min-height: 34px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: rgba(8, 31, 55, 0.8);
-  color: #d9ecff;
-  border: 1px solid rgba(116, 215, 255, 0.35);
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.filter-btn:hover {
-  background: rgba(116, 215, 255, 0.16);
-  border-color: rgba(116, 215, 255, 0.8);
-  color: #74d7ff;
-}
-
-.filter-btn.active {
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
-  color: #ffffff;
-  border-color: transparent;
+#clipList.clip-grid {
+  max-width: 860px;
+  margin: 0 auto;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 @media (max-width: 768px) {
   .clips-title-row {
-    padding: 0 18px;
+    padding: 20px 18px 0;
   }
 
   .clips-title-main {
@@ -2547,174 +2864,279 @@ html {
     width: 100%;
     max-width: 240px;
   }
+
+  #clipList.clip-grid {
+    grid-template-columns: 1fr;
+  }
 }
 /* ============================= */
-/* 인물 페이지 제목 + 프로필 올리기 버튼 중앙 정렬 */
+/* 클립 페이지 제목 완전 중앙 정렬 강제 */
 /* ============================= */
 
-.people-title-row {
-  max-width: 860px;
-  margin: 0 auto 28px;
-  text-align: center;
-  display: block;
+.page-hero.clips-title-row {
+  width: 100% !important;
+  max-width: 860px !important;
+  margin: 0 auto 34px !important;
+  padding: 24px 0 0 !important;
+  text-align: center !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
 }
 
-.people-title-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.clips-title-inner {
+  width: 100% !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  text-align: center !important;
 }
 
-.people-title-main {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
+.clips-title-inner .hero-subtitle {
+  text-align: center !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 
-.people-title-main h1 {
-  margin: 0;
-  font-size: 46px;
-  line-height: 1.2;
+.clips-title-main {
+  width: 100% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 14px !important;
+  flex-wrap: wrap !important;
+  text-align: center !important;
 }
 
-.people-title-inner > p:last-child {
-  margin-top: 12px;
-  color: #c8d8e8;
-  font-size: 17px;
-  line-height: 1.7;
+.clips-title-main h1 {
+  margin: 0 !important;
+  font-size: 46px !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
 }
 
-.people-upload-page-btn {
-  padding: 11px 18px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
-  color: #ffffff;
-  border: none;
-  font-size: 13px;
-  font-weight: 900;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
-  transition: 0.2s;
+.clips-title-inner > p:last-child {
+  width: 100% !important;
+  margin-top: 12px !important;
+  text-align: center !important;
+  color: #c8d8e8 !important;
+  font-size: 17px !important;
+  line-height: 1.7 !important;
 }
 
-.people-upload-page-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+.clip-upload-page-btn {
+  padding: 11px 18px !important;
+  border-radius: 14px !important;
+  background: linear-gradient(135deg, #38bdf8, #2563eb) !important;
+  color: #ffffff !important;
+  border: none !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  cursor: pointer !important;
+  white-space: nowrap !important;
+  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18) !important;
+  transition: 0.2s !important;
 }
 
-/* 인물 검색/필터 박스 중앙 정렬 */
-.people-filter-box {
-  max-width: 860px;
-  margin-left: auto;
-  margin-right: auto;
+.clip-upload-page-btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28) !important;
+}
+
+/* 검색 박스와 클립 목록 폭도 제목과 맞춤 */
+.filter-box,
+.clip-list-section,
+#clipList.clip-grid {
+  max-width: 860px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.clip-list-section {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.clip-list-section .section-title {
+  max-width: 860px !important;
+  margin: 0 auto 22px !important;
 }
 
 @media (max-width: 768px) {
-  .people-title-row {
-    padding: 0 18px;
+  .page-hero.clips-title-row {
+    padding: 20px 18px 0 !important;
   }
 
-  .people-title-main {
-    flex-direction: column;
-    gap: 12px;
+  .clips-title-main {
+    flex-direction: column !important;
+    gap: 12px !important;
   }
 
-  .people-title-main h1 {
-    font-size: 34px;
+  .clips-title-main h1 {
+    font-size: 34px !important;
   }
 
-  .people-upload-page-btn {
-    width: 100%;
-    max-width: 240px;
+  .clip-upload-page-btn {
+    width: 100% !important;
+    max-width: 240px !important;
   }
 }
 /* ============================= */
-/* 인물 페이지 제목 + 프로필 올리기 버튼 */
+/* 클립 카드 크기 복구 */
 /* ============================= */
 
-.people-title-row {
-  max-width: 860px;
-  margin: 0 auto 28px;
-  text-align: center;
+.clip-list-section {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
 }
 
-.people-title-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.clip-list-section .section-title {
+  max-width: 1180px !important;
+  margin: 0 auto 22px !important;
 }
 
-.people-title-main {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
-  flex-wrap: wrap;
+#clipList.clip-grid,
+.clip-grid {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)) !important;
+  gap: 22px !important;
 }
 
-.people-title-main h1 {
-  margin: 0;
-  font-size: 46px;
-  line-height: 1.2;
+.clip-card {
+  width: 100% !important;
+  min-height: 260px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
 }
 
-.people-title-inner > p:last-child {
-  margin-top: 12px;
-  color: #c8d8e8;
-  font-size: 17px;
-  line-height: 1.7;
+.clip-card .thumbnail,
+.clip-card .thumbnail img {
+  width: 100% !important;
+  height: 150px !important;
 }
 
-.people-upload-page-btn {
-  padding: 11px 18px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #38bdf8, #2563eb);
-  color: #ffffff;
-  border: none;
-  font-size: 13px;
-  font-weight: 900;
-  cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 10px 24px rgba(56, 189, 248, 0.18);
-  transition: 0.2s;
+.clip-card .thumbnail img {
+  object-fit: cover !important;
 }
 
-.people-upload-page-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 14px 30px rgba(56, 189, 248, 0.28);
+.clip-card .clip-info {
+  padding: 16px !important;
 }
 
-.people-filter-box {
-  max-width: 860px;
-  margin-left: auto;
-  margin-right: auto;
+.clip-card .clip-info h3 {
+  font-size: 16px !important;
+  line-height: 1.4 !important;
 }
 
 @media (max-width: 768px) {
-  .people-title-main {
-    flex-direction: column;
-    gap: 12px;
+  #clipList.clip-grid,
+  .clip-grid {
+    grid-template-columns: 1fr !important;
   }
 
-  .people-title-main h1 {
-    font-size: 34px;
-  }
-
-  .people-upload-page-btn {
-    width: 100%;
-    max-width: 240px;
+  .clip-card .thumbnail,
+  .clip-card .thumbnail img {
+    height: 180px !important;
   }
 }
-.profile-preview {
+/* ============================= */
+/* 클립 카드 사이즈 조정 */
+/* ============================= */
+
+.clip-list-section {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.clip-list-section .section-title {
+  max-width: 1180px !important;
+  margin: 0 auto 24px !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+
+#clipList.clip-grid,
+.clip-grid {
+  max-width: 1180px !important;
+  margin: 0 auto !important;
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 260px)) !important;
+  gap: 24px !important;
+  justify-content: start !important;
+}
+
+.clip-card {
+  width: 260px !important;
+  min-height: 280px !important;
+  border-radius: 18px !important;
+  overflow: hidden !important;
+}
+
+.clip-card .thumbnail {
+  width: 100% !important;
+  height: 150px !important;
+}
+
+.clip-card .thumbnail img {
+  width: 100% !important;
+  height: 150px !important;
+  object-fit: cover !important;
+}
+
+.clip-card .clip-info {
+  padding: 16px !important;
+}
+
+.clip-card .clip-info h3 {
+  font-size: 16px !important;
+  line-height: 1.4 !important;
+  margin-top: 10px !important;
+}
+
+.clip-card .clip-info p {
+  font-size: 12px !important;
+  line-height: 1.5 !important;
+}
+.clip-owner-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.edit-clip-btn,
+.delete-clip-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 900;
   cursor: pointer;
   transition: 0.2s;
 }
 
-.profile-preview:hover {
-  border-color: rgba(116, 215, 255, 0.8);
-  background: rgba(8, 31, 55, 0.9);
-  box-shadow: 0 0 20px rgba(116, 215, 255, 0.12);
+.edit-clip-btn {
+  background: rgba(56, 189, 248, 0.18);
+  color: #74d7ff;
+  border: 1px solid rgba(116, 215, 255, 0.45);
+}
+
+.edit-clip-btn:hover {
+  background: rgba(56, 189, 248, 0.28);
+  transform: translateY(-2px);
+}
+
+.delete-clip-btn {
+  background: rgba(255, 72, 104, 0.14);
+  color: #ff8aa0;
+  border: 1px solid rgba(255, 72, 104, 0.45);
+}
+
+.delete-clip-btn:hover {
+  background: rgba(255, 72, 104, 0.24);
+  transform: translateY(-2px);
 }

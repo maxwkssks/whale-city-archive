@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>프로필 수정 | 고래시티 아카이브</title>
+
+  <link rel="stylesheet" href="./css/style.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link 
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" 
+    rel="stylesheet"
+  >
+</head>
+<body>
+
+  <header class="header">
+    <a href="./index.html" class="logo">
+      <span class="logo-icon">🐋</span>
+      <span>고래시티 아카이브</span>
+    </a>
+
+    <nav class="nav">
+      <a href="./index.html">홈</a>
+      <a href="./clips.html">클립</a>
+      <a href="./index.html#hotclips">핫클립</a>
+      <a href="./worldcups.html">월드컵</a>
+      <a href="./people.html" class="active">인물</a>
+      <a href="./index.html#events">사건기록</a>
+      <a href="./admin.html">관리자</a>
+    </nav>
+
+    <button class="login-btn" id="headerLoginBtn">로그인</button>
+  </header>
+
+  <main class="upload-page">
+    <section class="upload-card">
+      <div class="auth-title">
+        <p class="hero-subtitle">UPDATE PROFILE</p>
+        <h1>프로필 수정하기</h1>
+        <p>처음 등록했던 프로필 정보를 수정하세요.</p>
+      </div>
+
+      <form class="upload-form" id="editPersonForm">
+        <label>
+          이름
+          <input type="text" id="editPersonName" placeholder="예: 울산큰고래" required>
+        </label>
+
+        <label>
+          애청자 수
+          <input type="text" id="editPersonFollowers" placeholder="예: 61,436" required>
+        </label>
+
+        <label>
+          프로필 사진 파일
+          <input type="file" id="editPersonProfileImageFile" accept="image/*" class="hidden-file-input">
+        </label>
+
+        <div class="upload-preview-box">
+          <p>프로필 미리보기</p>
+          <div class="profile-preview" id="editPersonProfilePreviewBox">
+            <img id="editPersonProfilePreview" src="" alt="프로필 미리보기">
+            <span id="editPersonPreviewPlaceholder">클릭해서 프로필 이미지를 변경하세요.</span>
+          </div>
+        </div>
+
+        <label>
+          설명
+          <textarea id="editPersonDescription" placeholder="인물 설명을 입력하세요." required></textarea>
+        </label>
+
+        <label>
+          소속
+          <input type="text" id="editPersonTeam" placeholder="예: 경찰청, EMS, 시청, 갱단명" required>
+        </label>
+
+        <label>
+          직책 / 역할
+          <input type="text" id="editPersonRole" placeholder="예: 경찰서장, 병원장, 조직원" required>
+        </label>
+
+        <label>
+          직업군
+          <select id="editPersonType" required>
+            <option value="">직업군을 선택하세요</option>
+            <option value="EMS">EMS</option>
+            <option value="경찰">경찰</option>
+            <option value="시청직원">시청직원</option>
+            <option value="언론인">언론인</option>
+            <option value="정치인">정치인</option>
+            <option value="갱">갱</option>
+            <option value="시민">시민</option>
+            <option value="운영자">운영자</option>
+          </select>
+        </label>
+
+        <div id="editGangNameBox" class="hidden gang-select-box">
+          <label>
+            갱단 이름
+            <select id="editPersonGangName">
+              <option value="">갱단을 선택하세요</option>
+              <option value="아자방">아자방</option>
+              <option value="블랙핀">블랙핀</option>
+              <option value="크라켄">크라켄</option>
+              <option value="샤크">샤크</option>
+              <option value="고래파">고래파</option>
+              <option value="직접입력">직접 입력</option>
+            </select>
+          </label>
+
+          <label id="editCustomGangNameBox" class="hidden">
+            새 갱단 이름
+            <input type="text" id="editCustomGangName" placeholder="예: 남부연합, 흑사회, 북부연합">
+          </label>
+        </div>
+
+        <label>
+          외부 링크
+          <input type="text" id="editPersonLink" placeholder="https://www.sooplive.com/station/아이디" required>
+        </label>
+
+        <button type="submit" class="auth-submit-btn">프로필 수정하기</button>
+        <p class="auth-message" id="editPersonMessage"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 고래시티 아카이브. Fan Archive Project.</p>
+  </footer>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+</html>
