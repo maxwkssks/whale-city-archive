@@ -4,11 +4,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 
 import {
   getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  // [추가] signInAnonymously: SOOP 로그인 후 Firestore 쓰기 권한용 Firebase 세션 생성
+  signInAnonymously,
+  // [제거] createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile
+  //        이메일/비밀번호 방식 제거로 더 이상 사용하지 않음
   signOut,
-  onAuthStateChanged,
-  updateProfile
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
@@ -19,7 +20,7 @@ import {
   addDoc,
   doc,
   setDoc,
-  onSnapshot,
+  getDocs,
   query,
   orderBy,
   serverTimestamp
@@ -56,16 +57,14 @@ console.log("Firebase 연결 완료");
 export {
   auth,
   db,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  signInAnonymously,
   signOut,
   onAuthStateChanged,
-  updateProfile,
   collection,
   addDoc,
   doc,
   setDoc,
-  onSnapshot,
+  getDocs,
   query,
   orderBy,
   serverTimestamp

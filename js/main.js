@@ -1,21 +1,84 @@
 import {
   auth,
   db,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
+  // [추가] signInAnonymously: SOOP 로그인 후 Firestore 쓰기 권한용 Firebase 세션 생성
+  signInAnonymously,
+  // [제거] createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile,
+  //        setDoc, doc, serverTimestamp
+  //        → 이메일/비밀번호 회원가입·로그인 방식 제거로 불필요해짐
   signOut,
   onAuthStateChanged,
-  updateProfile,
   collection,
-  doc,
-  setDoc,
-  onSnapshot,
+  getDocs,
   query,
-  orderBy,
-  serverTimestamp
+  orderBy
 } from "./firebase.js";
 
 console.log("고래시티 아카이브 시작");
+
+/* ============================= */
+/* [추가] SOOP 사용자 정보 관리  */
+/* ============================= */
+
+// SOOP 로그인 성공 시 soop-callback.js → URL 파라미터 → 여기서 localStorage 저장
+// localStorage를 쓰는 이유: Firebase 익명 세션은 Firebase가 관리하고,
+// SOOP 닉네임은 별도로 저장해야 수정 기록에 남길 수 있음
+
+function getSoopUser() {
+  const soopId   = localStorage.getItem("soop_id");
+  const soopNick = localStorage.getItem("soop_nick");
+  if (!soopId || !soopNick) return null;
+  return { soopId, soopNick };
+}
+
+// login.html 에서만 실행: URL에 soop_id·soop_nick 파라미터가 있으면
+// localStorage에 저장하고 Firebase 익명 로그인 후 홈으로 이동
+if (location.pathname.includes("login.html")) {
+  const soopParams  = new URLSearchParams(location.search);
+  const soopIdParam = soopParams.get("soop_id");
+  const soopNickParam = soopParams.get("soop_nick");
+  const soopError   = soopParams.get("soop");
+
+  const soopMessage = document.querySelector("#soopMessage");
+
+  if (soopError === "error" && soopMessage) {
+    // soop-callback.js에서 사용자 정보 조회 실패 시 오류 안내
+    soopMessage.className = "auth-message error";
+    soopMessage.textContent = "SOOP 로그인 중 오류가 발생했습니다. 다시 시도해주세요.";
+
+  } else if (soopIdParam && soopNickParam) {
+    // SOOP 콜백 성공: 닉네임·ID를 저장하고 Firebase 익명 로그인
+    localStorage.setItem("soop_id",   soopIdParam);
+    localStorage.setItem("soop_nick", soopNickParam);
+
+    if (soopMessage) {
+      soopMessage.className = "auth-message success";
+      soopMessage.textContent = `${soopNickParam}님, 환영합니다! 잠시 후 홈으로 이동합니다.`;
+    }
+
+    // [버그 수정] 이미 로그인된 상태에서 SOOP 로그인을 다시 시도하면
+    // signInAnonymously()가 새 익명 계정을 만들어 uid가 바뀜
+    // → 기존에 본인이 올린 클립·인물의 uid와 달라져서 수정 불가해지는 문제
+    // 해결: auth.currentUser로 이미 세션이 있는지 먼저 확인 후 분기
+    if (auth.currentUser) {
+      // 이미 로그인 중 → uid는 그대로 유지하고 SOOP 정보만 갱신 후 이동
+      setTimeout(() => { location.href = "./index.html"; }, 1000);
+    } else {
+      // 신규 로그인 → Firebase 익명 로그인으로 Firestore 쓰기 권한 획득
+      signInAnonymously(auth)
+        .then(() => {
+          setTimeout(() => { location.href = "./index.html"; }, 1000);
+        })
+        .catch((error) => {
+          console.error("Firebase 익명 로그인 실패:", error);
+          if (soopMessage) {
+            soopMessage.className = "auth-message error";
+            soopMessage.textContent = "로그인 처리 중 오류가 발생했습니다. 다시 시도해주세요.";
+          }
+        });
+    }
+  }
+}
 
 /* ============================= */
 /* 전역 로그인 사용자 */
@@ -43,28 +106,6 @@ if (worldcupButton) {
 }
 
 /* ============================= */
-/* 기본 클립 데이터 */
-/* ============================= */
-
-const defaultClips = [
-  {
-    id: "1",
-    title: "고래시티 레전드 장면",
-    tag: "레전드",
-    views: 1204,
-    likes: 340,
-    date: "2026.05.08",
-    thumbnail: "./images/clip1.jpg",
-    videoType: "soop",
-    videoUrl: "https://vod.sooplive.com/player/193625775/embed?type=catch&showChat=false&mutePlay=false",
-    description: "고래시티에서 나온 대표적인 레전드 장면입니다."
-  },
-  
-  
-  
-];
-
-/* ============================= */
 /* Firebase 클립 데이터 */
 /* ============================= */
 
@@ -80,6 +121,7 @@ function getDeletedClipIds() {
   return JSON.parse(saved);
 }
 
+// 클립 삭제 직후 getDocs가 재실행되기 전 잠깐 재표시되는 것을 막기 위한 낙관적 UI 처리
 function saveDeletedClipId(clipId) {
   const deletedIds = getDeletedClipIds();
 
@@ -92,10 +134,7 @@ function saveDeletedClipId(clipId) {
 
 function getAllClips() {
   const deletedIds = getDeletedClipIds();
-
-  return [...firebaseClips, ...defaultClips].filter((clip) => {
-    return !deletedIds.includes(String(clip.id));
-  });
+  return firebaseClips.filter((clip) => !deletedIds.includes(String(clip.id)));
 }
 
 function formatFirebaseDate(timestamp) {
@@ -111,104 +150,48 @@ function formatFirebaseDate(timestamp) {
   return `${year}.${month}.${day}`;
 }
 
-function listenFirebaseClips() {
+async function loadFirebaseClips() {
   const needsClips =
     document.querySelector("#clipList") ||
     document.querySelector("#clipDetail");
 
   if (!needsClips) return;
 
-  const clipsQuery = query(
-    collection(db, "clips"),
-    orderBy("createdAt", "desc")
-  );
+  try {
+    const clipsQuery = query(
+      collection(db, "clips"),
+      orderBy("createdAt", "desc")
+    );
 
-  onSnapshot(
-    clipsQuery,
-    (snapshot) => {
-      firebaseClips = snapshot.docs.map((docItem) => {
-        const data = docItem.data();
+    const snapshot = await getDocs(clipsQuery);
 
-        return {
-          id: docItem.id,
-          title: data.title || "제목 없음",
-          tag: data.tag || "기타",
-          views: data.views || 0,
-          likes: data.likes || 0,
-          likedUsers: Array.isArray(data.likedUsers) ? data.likedUsers : [],
-          date: formatFirebaseDate(data.createdAt),
-          thumbnail: data.thumbnail || "./images/clip1.jpg",
-          videoType: data.videoType || "youtube",
-          videoUrl: data.videoUrl || "",
-          description: data.description || "설명이 없습니다.",
-          uid: data.uid || "",
-          uploaderName: data.uploaderName || "알 수 없음"
-        };
-      });
+    firebaseClips = snapshot.docs.map((docItem) => {
+      const data = docItem.data();
 
-      renderClips();
-      renderClipDetail();
-    },
-    (error) => {
-      console.error("Firestore 클립 불러오기 실패:", error);
-    }
-  );
-}
+      return {
+        id: docItem.id,
+        title: data.title || "제목 없음",
+        tag: data.tag || "기타",
+        views: data.views || 0,
+        likes: data.likes || 0,
+        likedUsers: Array.isArray(data.likedUsers) ? data.likedUsers : [],
+        date: formatFirebaseDate(data.createdAt),
+        thumbnail: data.thumbnail || "./images/clip1.jpg",
+        videoType: data.videoType || "youtube",
+        videoUrl: data.videoUrl || "",
+        description: data.description || "설명이 없습니다.",
+        soopId: data.soopId || "",
+        uid: data.uid || "",
+        uploaderName: data.uploaderName || "알 수 없음"
+      };
+    });
 
-/* ============================= */
-/* 기본 인물 데이터 */
-/* ============================= */
-
-const people = [
-  {
-    id: 1,
-    name: "울산큰고래",
-    followers: "67,502",
-    profileImage: "https://stimg.sooplive.com/LOGO/ba/bach023/m/bach023.webp",
-    description: "SOOP",
-    team: "123",
-    role: "12",
-    type: "시민",
-    gangName: "",
-    link: "https://www.sooplive.com/station/bach023"
-  },
-  {
-    id: 2,
-    name: "조디악",
-    followers: "54,327",
-    profileImage: "https://stimg.sooplive.com/LOGO/yj/yjkim5500/yjkim5500.jpg",
-    description: "고래시티의 경찰서장입니다.",
-    team: "경찰서장",
-    role: "경찰",
-    type: "경찰",
-    gangName: "",
-    link: "https://www.sooplive.com/station/yjkim5500"
-  },
-  {
-    id: 3,
-    name: "단츄",
-    followers: "48,627",
-    profileImage: "https://stimg.sooplive.com/LOGO/da/danchu17/danchu17.jpg",
-    description: "고래시티의 EMS 병원장입니다.",
-    team: "EMS병원장",
-    role: "EMS",
-    type: "EMS",
-    gangName: "",
-    link: "https://www.sooplive.com/station/danchu17"
-  },
-  {
-    id: 4,
-    name: "멜로딩딩",
-    followers: "8,560",
-    profileImage: "https://stimg.sooplive.com/LOGO/me/melodingding/melodingding.jpg",
-    description: "고래시티의 운영자입니다.",
-    team: "운영팀",
-    role: "운영자",
-    type: "운영자",
-    gangName: "",
-    link: "https://www.sooplive.com/station/melodingding"
+    renderClips();
+    renderClipDetail();
+  } catch (error) {
+    console.error("Firestore 클립 불러오기 실패:", error);
   }
-];
+}
 
 /* ============================= */
 /* Firebase 인물 데이터 */
@@ -217,47 +200,46 @@ const people = [
 let firebasePeople = [];
 
 function getAllPeople() {
-  return [...firebasePeople, ...people];
+  return firebasePeople;
 }
 
-function listenFirebasePeople() {
+async function loadFirebasePeople() {
   const needsPeople = document.querySelector("#peopleList");
 
   if (!needsPeople) return;
 
-  const peopleQuery = query(
-    collection(db, "people"),
-    orderBy("createdAt", "desc")
-  );
+  try {
+    const peopleQuery = query(
+      collection(db, "people"),
+      orderBy("createdAt", "desc")
+    );
 
-  onSnapshot(
-    peopleQuery,
-    (snapshot) => {
-      firebasePeople = snapshot.docs.map((docItem) => {
-        const data = docItem.data();
+    const snapshot = await getDocs(peopleQuery);
 
-        return {
-          id: docItem.id,
-          name: data.name || "이름 없음",
-          followers: data.followers || "0",
-          profileImage: data.profileImage || "./images/profile1.jpg",
-          description: data.description || "설명이 없습니다.",
-          team: data.team || "소속 없음",
-          role: data.role || "직책 없음",
-          type: data.type || "시민",
-          gangName: data.gangName || "",
-          link: data.link || "#",
-          uid: data.uid || "",
-          uploaderName: data.uploaderName || "알 수 없음"
-        };
-      });
+    firebasePeople = snapshot.docs.map((docItem) => {
+      const data = docItem.data();
 
-      renderPeople();
-    },
-    (error) => {
-      console.error("Firestore 인물 불러오기 실패:", error);
-    }
-  );
+      return {
+        id: docItem.id,
+        name: data.name || "이름 없음",
+        followers: data.followers || "0",
+        profileImage: data.profileImage || "./images/profile1.jpg",
+        description: data.description || "설명이 없습니다.",
+        team: data.team || "소속 없음",
+        role: data.role || "직책 없음",
+        type: data.type || "시민",
+        gangName: data.gangName || "",
+        link: data.link || "#",
+        soopId: data.soopId || "",
+        uid: data.uid || "",
+        uploaderName: data.uploaderName || "알 수 없음"
+      };
+    });
+
+    renderPeople();
+  } catch (error) {
+    console.error("Firestore 인물 불러오기 실패:", error);
+  }
 }
 
 /* ============================= */
@@ -433,10 +415,10 @@ function renderClipDetail() {
     return;
   }
 
-  const isOwner =
-    currentUser &&
-    clip.uid &&
-    String(currentUser.uid) === String(clip.uid);
+  // [변경] Firebase uid 대신 SOOP ID로 소유권 확인
+  //        soopId가 없는 기존 데이터(이메일 계정 시절 업로드)는 소유자 버튼 표시 안 함
+  const soopUserForOwner = getSoopUser();
+  const isOwner = soopUserForOwner && clip.soopId && soopUserForOwner.soopId === clip.soopId;
 
     const likedUsers = Array.isArray(clip.likedUsers) ? clip.likedUsers : [];
 
@@ -589,7 +571,8 @@ function saveViewedClipId(clipId) {
 }
 
 async function increaseClipViewCount(clip) {
-  if (!clip || !clip.uid) return;
+  // soopId와 uid 둘 다 없으면 Firestore에 저장되지 않은 비정상 문서이므로 건너뜀
+  if (!clip || (!clip.soopId && !clip.uid)) return;
 
   const viewedIds = getViewedClipIds();
 
@@ -600,12 +583,20 @@ async function increaseClipViewCount(clip) {
   try {
     const nextViews = Number(clip.views || 0) + 1;
 
+    // [버그 수정] Authorization 헤더 없이 PATCH 요청을 보내면
+    // Firestore 보안 규칙(request.auth != null)에 막혀서 조회수가 올라가지 않음
+    // currentUser가 없으면(비로그인) 조회수 증가 건너뜀
+    if (!currentUser) return;
+
+    const viewToken = await currentUser.getIdToken();
+
     const response = await fetch(
       getClipDocumentUrl(clip.id) + "?updateMask.fieldPaths=views",
       {
         method: "PATCH",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${viewToken}`
         },
         body: JSON.stringify({
           fields: {
@@ -635,10 +626,8 @@ async function toggleClipLike(clip) {
     return;
   }
 
-  if (!clip || !clip.uid) {
-    alert("기본 샘플 클립은 좋아요 저장을 지원하지 않습니다.");
-    return;
-  }
+  // soopId와 uid 둘 다 없으면 Firestore에 저장되지 않은 비정상 문서이므로 건너뜀
+  if (!clip || (!clip.soopId && !clip.uid)) return;
 
   const likedUsers = Array.isArray(clip.likedUsers) ? [...clip.likedUsers] : [];
   const myUid = currentUser.uid;
@@ -717,7 +706,10 @@ async function updateClipToFirestoreRest(clipId, updateData) {
     "&updateMask.fieldPaths=videoType" +
     "&updateMask.fieldPaths=videoUrl" +
     "&updateMask.fieldPaths=description" +
-    "&updateMask.fieldPaths=updatedAt";
+    "&updateMask.fieldPaths=updatedAt" +
+    // [추가] editedBy: 마지막으로 수정한 SOOP 닉네임을 Firestore에 기록
+    //        updateMask에 명시해야 해당 필드만 PATCH로 업데이트됨
+    "&updateMask.fieldPaths=editedBy";
 
   const response = await fetch(url, {
     method: "PATCH",
@@ -733,7 +725,9 @@ async function updateClipToFirestoreRest(clipId, updateData) {
         videoType: { stringValue: updateData.videoType },
         videoUrl: { stringValue: updateData.videoUrl },
         description: { stringValue: updateData.description },
-        updatedAt: { timestampValue: new Date().toISOString() }
+        updatedAt: { timestampValue: new Date().toISOString() },
+        // [추가] 수정자 SOOP 닉네임 저장 (updateData.editedBy로 전달받음)
+        editedBy: { stringValue: updateData.editedBy || "알 수 없음" }
       }
     })
   });
@@ -773,7 +767,9 @@ async function openClipEditPrompt(clip) {
     return;
   }
 
-  if (!clip.uid || currentUser.uid !== clip.uid) {
+  // [변경] Firebase uid → SOOP ID로 소유권 확인
+  const soopUserForEdit = getSoopUser();
+  if (!soopUserForEdit || !clip.soopId || soopUserForEdit.soopId !== clip.soopId) {
     alert("본인이 올린 클립만 수정할 수 있습니다.");
     return;
   }
@@ -796,13 +792,16 @@ async function openClipEditPrompt(clip) {
   const description = prompt("클립 설명을 수정하세요.", clip.description);
   if (description === null) return;
 
+  // [추가] editedBy: prompt 수정 시에도 SOOP 닉네임 기록
+  const soopUserForClip = getSoopUser();
   const updateData = {
     title: title.trim(),
     tag: tag.trim(),
     thumbnail: thumbnail.trim(),
     videoType: videoType.trim(),
     videoUrl: videoUrl.trim(),
-    description: description.trim()
+    description: description.trim(),
+    editedBy: soopUserForClip ? soopUserForClip.soopNick : "알 수 없음"
   };
 
   if (
@@ -834,7 +833,9 @@ async function deleteCurrentClip(targetClip) {
     return;
   }
 
-  if (!targetClip.uid || currentUser.uid !== targetClip.uid) {
+  // [변경] Firebase uid → SOOP ID로 소유권 확인
+  const soopUserForDelete = getSoopUser();
+  if (!soopUserForDelete || !targetClip.soopId || soopUserForDelete.soopId !== targetClip.soopId) {
     alert("본인이 올린 클립만 삭제할 수 있습니다.");
     return;
   }
@@ -954,9 +955,10 @@ function renderPeople() {
         }
 
         ${
-          currentUser &&
-          person.uid &&
-          String(currentUser.uid) === String(person.uid)
+          // [변경] Firebase uid → SOOP ID로 소유자 버튼 표시 여부 결정
+          getSoopUser() &&
+          person.soopId &&
+          getSoopUser().soopId === person.soopId
             ? `
               <div class="people-owner-actions">
                 <button type="button" class="edit-person-btn" data-id="${person.id}">
@@ -1041,7 +1043,9 @@ async function updatePersonToFirestoreRest(personId, updateData) {
     "&updateMask.fieldPaths=type" +
     "&updateMask.fieldPaths=gangName" +
     "&updateMask.fieldPaths=link" +
-    "&updateMask.fieldPaths=updatedAt";
+    "&updateMask.fieldPaths=updatedAt" +
+    // [추가] editedBy: 수정자 SOOP 닉네임 기록용
+    "&updateMask.fieldPaths=editedBy";
 
   const response = await fetch(url, {
     method: "PATCH",
@@ -1060,7 +1064,9 @@ async function updatePersonToFirestoreRest(personId, updateData) {
         type: { stringValue: updateData.type },
         gangName: { stringValue: updateData.gangName || "" },
         link: { stringValue: updateData.link },
-        updatedAt: { timestampValue: new Date().toISOString() }
+        updatedAt: { timestampValue: new Date().toISOString() },
+        // [추가] 수정자 SOOP 닉네임 저장
+        editedBy: { stringValue: updateData.editedBy || "알 수 없음" }
       }
     })
   });
@@ -1100,7 +1106,9 @@ async function openPersonEditPrompt(person) {
     return;
   }
 
-  if (!person.uid || currentUser.uid !== person.uid) {
+  // [변경] Firebase uid → SOOP ID로 소유권 확인
+  const soopUserForPersonEdit = getSoopUser();
+  if (!soopUserForPersonEdit || !person.soopId || soopUserForPersonEdit.soopId !== person.soopId) {
     alert("본인이 올린 프로필만 수정할 수 있습니다.");
     return;
   }
@@ -1142,6 +1150,8 @@ async function openPersonEditPrompt(person) {
   const link = prompt("외부 링크를 수정하세요.", person.link);
   if (link === null) return;
 
+  // [추가] editedBy: prompt 수정 시에도 SOOP 닉네임 기록
+  const soopUserForPerson = getSoopUser();
   const updateData = {
     name: name.trim(),
     followers: followers.trim(),
@@ -1151,7 +1161,8 @@ async function openPersonEditPrompt(person) {
     role: role.trim(),
     type: type.trim(),
     gangName: gangName.trim(),
-    link: link.trim()
+    link: link.trim(),
+    editedBy: soopUserForPerson ? soopUserForPerson.soopNick : "알 수 없음"
   };
 
   if (
@@ -1190,7 +1201,9 @@ async function deleteCurrentPerson(person) {
     return;
   }
 
-  if (!person.uid || currentUser.uid !== person.uid) {
+  // [변경] Firebase uid → SOOP ID로 소유권 확인
+  const soopUserForPersonDelete = getSoopUser();
+  if (!soopUserForPersonDelete || !person.soopId || soopUserForPersonDelete.soopId !== person.soopId) {
     alert("본인이 올린 프로필만 삭제할 수 있습니다.");
     return;
   }
@@ -1220,14 +1233,9 @@ async function deleteCurrentPerson(person) {
 
 const headerLoginBtn = document.querySelector("#headerLoginBtn");
 
-const loginTab = document.querySelector("#loginTab");
-const signupTab = document.querySelector("#signupTab");
-
-const loginForm = document.querySelector("#loginForm");
-const signupForm = document.querySelector("#signupForm");
-
-const loginMessage = document.querySelector("#loginMessage");
-const signupMessage = document.querySelector("#signupMessage");
+// [제거] loginTab, signupTab, loginForm, signupForm, loginMessage, signupMessage
+//        이메일/비밀번호 로그인·회원가입 UI가 login.html에서 제거되었으므로
+//        관련 querySelector와 이벤트 핸들러 전체 삭제
 
 function showMessage(target, text, type) {
   if (!target) return;
@@ -1255,6 +1263,11 @@ function isValidLoginId(loginId) {
 }
 
 function logoutUser() {
+  // [추가] 로그아웃 시 localStorage의 SOOP 정보도 함께 삭제
+  // Firebase 익명 세션만 지우고 SOOP 닉네임이 남으면 다음 방문자가 이전 사람으로 보일 수 있음
+  localStorage.removeItem("soop_id");
+  localStorage.removeItem("soop_nick");
+
   signOut(auth)
     .then(() => {
       alert("로그아웃되었습니다.");
@@ -1285,7 +1298,11 @@ function setupLoginDropdown(user) {
   }
 
   if (user) {
-    const nickname = user.displayName || user.email.split("@")[0];
+    // [변경] 기존: Firebase displayName 또는 이메일 앞부분을 닉네임으로 사용
+    //        변경: SOOP 로그인 닉네임을 우선 사용 (localStorage에 저장됨)
+    //             SOOP 정보가 없을 경우 Firebase uid 앞 8자를 fallback으로 사용
+    const soopUser = getSoopUser();
+    const nickname = soopUser ? soopUser.soopNick : (user.uid.slice(0, 8) + "…");
 
     headerLoginBtn.textContent = `${nickname}님`;
     headerLoginBtn.title = "메뉴 열기";
@@ -1318,6 +1335,9 @@ function setupLoginDropdown(user) {
         if (!confirmLogout) return;
 
         try {
+          // [추가] 로그아웃 시 SOOP 닉네임 정보도 함께 삭제
+          localStorage.removeItem("soop_id");
+          localStorage.removeItem("soop_nick");
           await signOut(auth);
           alert("로그아웃되었습니다.");
           location.href = "./index.html";
@@ -1387,159 +1407,10 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-/* 로그인 / 회원가입 탭 전환 */
-if (loginTab && signupTab && loginForm && signupForm) {
-  loginTab.addEventListener("click", () => {
-    loginTab.classList.add("active");
-    signupTab.classList.remove("active");
-
-    loginForm.classList.remove("hidden");
-    signupForm.classList.add("hidden");
-  });
-
-  signupTab.addEventListener("click", () => {
-    signupTab.classList.add("active");
-    loginTab.classList.remove("active");
-
-    signupForm.classList.remove("hidden");
-    loginForm.classList.add("hidden");
-  });
-}
-
-/* 회원가입 */
-if (signupForm) {
-  signupForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const nickname = document.querySelector("#signupNickname").value.trim();
-    const loginId = normalizeLoginId(document.querySelector("#signupLoginId").value);
-    const email = makeAuthEmailFromLoginId(loginId);
-    const password = document.querySelector("#signupPassword").value;
-    const passwordCheck = document.querySelector("#signupPasswordCheck").value;
-
-    if (nickname.length < 2) {
-      showMessage(signupMessage, "닉네임은 2자 이상 입력해주세요.", "error");
-      return;
-    }
-
-    if (loginId.length < 4) {
-      showMessage(signupMessage, "아이디는 4자 이상 입력해주세요.", "error");
-      return;
-    }
-
-    if (!isValidLoginId(loginId)) {
-      showMessage(signupMessage, "아이디는 영문 소문자, 숫자, 밑줄(_)만 사용할 수 있습니다.", "error");
-      return;
-    }
-
-    if (password.length < 6) {
-      showMessage(signupMessage, "비밀번호는 6자 이상 입력해주세요.", "error");
-      return;
-    }
-
-    if (password !== passwordCheck) {
-      showMessage(signupMessage, "비밀번호가 서로 다릅니다.", "error");
-      return;
-    }
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-
-      await updateProfile(userCredential.user, {
-        displayName: nickname
-      });
-
-      await setDoc(doc(db, "users", userCredential.user.uid), {
-        uid: userCredential.user.uid,
-        nickname,
-        loginId,
-        authEmail: email,
-        createdAt: serverTimestamp()
-      });
-
-      showMessage(signupMessage, "회원가입이 완료되었습니다! 홈 화면으로 이동합니다.", "success");
-
-      setTimeout(() => {
-        location.href = "./index.html";
-      }, 1200);
-    } catch (error) {
-      console.error("회원가입 실패:", error);
-
-      let message = "회원가입 중 오류가 발생했습니다.";
-
-      if (error.code === "auth/email-already-in-use") {
-        message = "이미 사용 중인 아이디입니다. 다른 아이디를 사용해주세요.";
-      }
-
-      if (error.code === "auth/invalid-email") {
-        message = "아이디 형식이 올바르지 않습니다.";
-      }
-
-      if (error.code === "auth/weak-password") {
-        message = "비밀번호는 6자 이상 입력해주세요.";
-      }
-
-      if (error.code === "auth/network-request-failed") {
-        message = "네트워크 연결을 확인해주세요.";
-      }
-
-      showMessage(signupMessage, message, "error");
-    }
-  });
-}
-
-/* 로그인 */
-if (loginForm) {
-  loginForm.addEventListener("submit", async (event) => {
-    event.preventDefault();
-
-    const loginId = normalizeLoginId(document.querySelector("#loginEmail").value);
-    const email = makeAuthEmailFromLoginId(loginId);
-    const password = document.querySelector("#loginPassword").value;
-
-    if (!loginId) {
-      showMessage(loginMessage, "아이디를 입력해주세요.", "error");
-      return;
-    }
-
-    if (!isValidLoginId(loginId)) {
-      showMessage(loginMessage, "아이디는 영문 소문자, 숫자, 밑줄(_)만 사용할 수 있습니다.", "error");
-      return;
-    }
-
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-
-      showMessage(loginMessage, "로그인 성공! 홈 화면으로 이동합니다.", "success");
-
-      setTimeout(() => {
-        location.href = "./index.html";
-      }, 1000);
-    } catch (error) {
-      console.error("로그인 실패:", error);
-
-      let message = "로그인에 실패했습니다.";
-
-      if (
-        error.code === "auth/invalid-credential" ||
-        error.code === "auth/user-not-found" ||
-        error.code === "auth/wrong-password"
-      ) {
-        message = "아이디 또는 비밀번호가 올바르지 않습니다.";
-      }
-
-      if (error.code === "auth/invalid-email") {
-        message = "아이디 형식이 올바르지 않습니다.";
-      }
-
-      if (error.code === "auth/network-request-failed") {
-        message = "네트워크 연결을 확인해주세요.";
-      }
-
-      showMessage(loginMessage, message, "error");
-    }
-  });
-}
+// [제거] 이메일/비밀번호 탭 전환, 회원가입, 로그인 폼 이벤트 핸들러 전체 삭제
+//        SOOP 로그인으로 완전 교체됨 (login.html 상단의 SOOP 버튼 참고)
+//        로그인 처리 흐름: /api/soop-login → SOOP OAuth → /api/soop-callback
+//        → login.html?soop_id=...&soop_nick=... → 이 파일 상단 SOOP 콜백 처리 블록
 
 /* ============================= */
 /* Firebase 클립 올리기 */
@@ -1768,7 +1639,8 @@ async function saveClipToFirestoreRest(clipData) {
                 values: []
               }
             },
-            uid: { stringValue: clipData.uid },
+            // [변경] uid → soopId: Firestore 문서에 SOOP ID 저장
+            soopId: { stringValue: clipData.soopId },
             uploaderName: { stringValue: clipData.uploaderName },
             createdAt: { timestampValue: new Date().toISOString() }
           }
@@ -1805,11 +1677,15 @@ if (uploadClipForm) {
 
     if (!currentUser) {
       showMessage(uploadMessage, "로그인 후 클립을 올릴 수 있습니다.", "error");
+      setTimeout(() => { location.href = "./login.html"; }, 800);
+      return;
+    }
 
-      setTimeout(() => {
-        location.href = "./login.html";
-      }, 800);
-
+    // [버그 수정] SOOP 로그인 정보 없이 등록하면 soopId가 빈 문자열로 저장되어
+    // 나중에 본인 클립 수정/삭제가 불가능해짐 → 여기서 차단
+    if (!getSoopUser()) {
+      showMessage(uploadMessage, "SOOP 로그인 정보가 없습니다. 다시 로그인해주세요.", "error");
+      setTimeout(() => { location.href = "./login.html"; }, 800);
       return;
     }
 
@@ -1838,6 +1714,9 @@ if (uploadClipForm) {
 
       showMessage(uploadMessage, "클립 등록 중입니다...", "success");
 
+      // [변경] uploaderName: 기존 Firebase displayName(이메일 계정 이름) →
+      //        SOOP 닉네임으로 변경. 누가 올렸는지 SOOP 이름으로 기록됨
+      const soopUser = getSoopUser();
       const clipData = {
         title,
         tag,
@@ -1847,8 +1726,9 @@ if (uploadClipForm) {
         description,
         views: 0,
         likes: 0,
-        uid: currentUser.uid,
-        uploaderName: currentUser.displayName || currentUser.email.split("@")[0]
+        // [변경] uid(Firebase 익명 uid) → soopId(SOOP 계정 ID)로 소유자 식별
+        soopId: soopUser ? soopUser.soopId : "",
+        uploaderName: soopUser ? soopUser.soopNick : "알 수 없음"
       };
 
       const result = await saveClipToFirestoreRest(clipData);
@@ -2016,7 +1896,8 @@ async function savePersonToFirestoreRest(personData) {
           type: { stringValue: personData.type },
           gangName: { stringValue: personData.gangName || "" },
           link: { stringValue: personData.link },
-          uid: { stringValue: personData.uid },
+          // [변경] uid → soopId: Firestore 문서에 SOOP ID 저장
+          soopId: { stringValue: personData.soopId },
           uploaderName: { stringValue: personData.uploaderName },
           createdAt: { timestampValue: new Date().toISOString() }
         }
@@ -2042,11 +1923,14 @@ if (uploadPersonForm) {
 
     if (!currentUser) {
       showMessage(personUploadMessage, "로그인 후 프로필을 등록할 수 있습니다.", "error");
+      setTimeout(() => { location.href = "./login.html"; }, 800);
+      return;
+    }
 
-      setTimeout(() => {
-        location.href = "./login.html";
-      }, 800);
-
+    // [버그 수정] soopId 없이 저장되면 나중에 수정/삭제 불가
+    if (!getSoopUser()) {
+      showMessage(personUploadMessage, "SOOP 로그인 정보가 없습니다. 다시 로그인해주세요.", "error");
+      setTimeout(() => { location.href = "./login.html"; }, 800);
       return;
     }
 
@@ -2091,6 +1975,8 @@ if (uploadPersonForm) {
 
       showMessage(personUploadMessage, "프로필 등록 중입니다...", "success");
 
+      // [변경] uploaderName: Firebase displayName → SOOP 닉네임으로 변경
+      const soopUser = getSoopUser();
       const personData = {
         name,
         followers,
@@ -2101,8 +1987,9 @@ if (uploadPersonForm) {
         type,
         gangName,
         link,
-        uid: currentUser.uid,
-        uploaderName: currentUser.displayName || currentUser.email
+        // [변경] uid → soopId: Firestore 문서에 SOOP ID 저장
+        soopId: soopUser ? soopUser.soopId : "",
+        uploaderName: soopUser ? soopUser.soopNick : "알 수 없음"
       };
 
       const result = await savePersonToFirestoreRest(personData);
@@ -2179,7 +2066,9 @@ async function fetchPersonById(personId) {
     type: fields.type?.stringValue || "",
     gangName: fields.gangName?.stringValue || "",
     link: fields.link?.stringValue || "",
-    uid: fields.uid?.stringValue || ""
+    // [변경] uid → soopId: 소유권 확인을 SOOP ID 기반으로 변경
+    soopId: fields.soopId?.stringValue || "",
+    uid: fields.uid?.stringValue || ""  // 기존 데이터 호환성 유지용
   };
 }
 
@@ -2286,7 +2175,9 @@ async function initEditPersonPage() {
 
     const person = await fetchPersonById(editingPersonId);
 
-    if (person.uid && String(person.uid) !== String(currentUser.uid)) {
+    // [변경] Firebase uid → SOOP ID로 소유권 확인
+    const soopUserForInitPerson = getSoopUser();
+    if (!soopUserForInitPerson || !person.soopId || soopUserForInitPerson.soopId !== person.soopId) {
       showMessage(editPersonMessage, "본인이 올린 프로필만 수정할 수 있습니다.", "error");
       return;
     }
@@ -2378,6 +2269,9 @@ if (editPersonForm) {
       return;
     }
 
+    // [추가] editedBy: 수정 시점의 SOOP 닉네임을 updateData에 포함
+    //        updatePersonToFirestoreRest 내부에서 Firestore에 기록됨
+    const soopUser = getSoopUser();
     const updateData = {
       name,
       followers,
@@ -2387,7 +2281,8 @@ if (editPersonForm) {
       role,
       type,
       gangName,
-      link
+      link,
+      editedBy: soopUser ? soopUser.soopNick : "알 수 없음"
     };
 
     try {
@@ -2460,7 +2355,9 @@ async function fetchClipById(clipId) {
     videoType: fields.videoType?.stringValue || "",
     videoUrl: fields.videoUrl?.stringValue || "",
     description: fields.description?.stringValue || "",
-    uid: fields.uid?.stringValue || ""
+    // [변경] uid → soopId: 소유권 확인을 SOOP ID 기반으로 변경
+    soopId: fields.soopId?.stringValue || "",
+    uid: fields.uid?.stringValue || ""  // 기존 데이터 호환성 유지용
   };
 }
 
@@ -2521,7 +2418,9 @@ async function initEditClipPage() {
 
     const clip = await fetchClipById(editingClipId);
 
-    if (clip.uid && String(clip.uid) !== String(currentUser.uid)) {
+    // [변경] Firebase uid → SOOP ID로 소유권 확인
+    const soopUserForInitClip = getSoopUser();
+    if (!soopUserForInitClip || !clip.soopId || soopUserForInitClip.soopId !== clip.soopId) {
       showMessage(editClipMessage, "본인이 올린 클립만 수정할 수 있습니다.", "error");
       return;
     }
@@ -2603,13 +2502,16 @@ if (editClipForm) {
       return;
     }
 
+    // [추가] editedBy: 수정 시점의 SOOP 닉네임을 updateData에 포함
+    const soopUser = getSoopUser();
     const updateData = {
       title,
       tag,
       thumbnail,
       videoType,
       videoUrl,
-      description
+      description,
+      editedBy: soopUser ? soopUser.soopNick : "알 수 없음"
     };
 
     try {
@@ -2747,7 +2649,8 @@ async function saveWorldcupToFirestoreRest(worldcupData) {
             }
           },
           playCount: { integerValue: "0" },
-          uid: { stringValue: worldcupData.uid },
+          // [변경] uid → soopId: Firestore 문서에 SOOP ID 저장
+          soopId: { stringValue: worldcupData.soopId },
           uploaderName: { stringValue: worldcupData.uploaderName },
           createdAt: { timestampValue: new Date().toISOString() }
         }
@@ -2771,11 +2674,14 @@ if (worldcupCreateForm) {
 
     if (!currentUser) {
       showMessage(worldcupCreateMessage, "로그인 후 월드컵을 만들 수 있습니다.", "error");
+      setTimeout(() => { location.href = "./login.html"; }, 800);
+      return;
+    }
 
-      setTimeout(() => {
-        location.href = "./login.html";
-      }, 800);
-
+    // [버그 수정] soopId 없이 저장되면 나중에 수정/삭제 불가
+    if (!getSoopUser()) {
+      showMessage(worldcupCreateMessage, "SOOP 로그인 정보가 없습니다. 다시 로그인해주세요.", "error");
+      setTimeout(() => { location.href = "./login.html"; }, 800);
       return;
     }
 
@@ -2804,13 +2710,16 @@ if (worldcupCreateForm) {
 
       showMessage(worldcupCreateMessage, "월드컵 등록 중입니다...", "success");
 
+      // [변경] uploaderName: Firebase displayName → SOOP 닉네임으로 변경
+      const soopUser = getSoopUser();
       const worldcupData = {
         title,
         description,
         category,
         candidates,
-        uid: currentUser.uid,
-        uploaderName: currentUser.displayName || currentUser.email
+        // [변경] uid → soopId: Firestore 문서에 SOOP ID 저장
+        soopId: soopUser ? soopUser.soopId : "",
+        uploaderName: soopUser ? soopUser.soopNick : "알 수 없음"
       };
 
       const result = await saveWorldcupToFirestoreRest(worldcupData);
@@ -2835,44 +2744,43 @@ if (worldcupCreateForm) {
   });
 }
 
-function listenFirebaseWorldcups() {
+async function loadFirebaseWorldcups() {
   if (!worldcupList) return;
 
-  const worldcupQuery = query(
-    collection(db, "worldcups"),
-    orderBy("createdAt", "desc")
-  );
+  try {
+    const worldcupQuery = query(
+      collection(db, "worldcups"),
+      orderBy("createdAt", "desc")
+    );
 
-  onSnapshot(
-    worldcupQuery,
-    (snapshot) => {
-      firebaseWorldcups = snapshot.docs.map((docItem) => {
-        const data = docItem.data();
+    const snapshot = await getDocs(worldcupQuery);
 
-        return {
-          id: docItem.id,
-          title: data.title || "제목 없음",
-          description: data.description || "설명이 없습니다.",
-          category: data.category || "기타",
-          candidates: Array.isArray(data.candidates) ? data.candidates : [],
-          playCount: data.playCount || 0,
-          uid: data.uid || "",
-          uploaderName: data.uploaderName || "알 수 없음"
-        };
-      });
+    firebaseWorldcups = snapshot.docs.map((docItem) => {
+      const data = docItem.data();
 
-      renderWorldcups();
-    },
-    (error) => {
-      console.error("월드컵 불러오기 실패:", error);
+      return {
+        id: docItem.id,
+        title: data.title || "제목 없음",
+        description: data.description || "설명이 없습니다.",
+        category: data.category || "기타",
+        candidates: Array.isArray(data.candidates) ? data.candidates : [],
+        playCount: data.playCount || 0,
+        soopId: data.soopId || "",
+        uid: data.uid || "",
+        uploaderName: data.uploaderName || "알 수 없음"
+      };
+    });
 
-      worldcupList.innerHTML = `
-        <div class="empty-message">
-          월드컵을 불러오지 못했습니다.
-        </div>
-      `;
-    }
-  );
+    renderWorldcups();
+  } catch (error) {
+    console.error("월드컵 불러오기 실패:", error);
+
+    worldcupList.innerHTML = `
+      <div class="empty-message">
+        월드컵을 불러오지 못했습니다.
+      </div>
+    `;
+  }
 }
 
 function renderWorldcups() {
@@ -3542,8 +3450,8 @@ renderClips();
 renderClipDetail();
 renderPeople();
 
-listenFirebaseClips();
-listenFirebasePeople();
-listenFirebaseWorldcups();
+loadFirebaseClips();
+loadFirebasePeople();
+loadFirebaseWorldcups();
 
 initWorldcupPlayPage();

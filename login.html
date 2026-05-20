@@ -42,94 +42,22 @@
 
       <div class="auth-title">
         <p class="hero-subtitle">WHALE CITY ACCOUNT</p>
-        <h1>로그인 / 회원가입</h1>
-        <p>고래시티 아카이브 계정을 만들어 클립과 인물 기록을 관리해보세요.</p>
+        <!-- [변경] 제목: 이메일 로그인 → SOOP 로그인으로 변경 -->
+        <h1>로그인</h1>
+        <!-- [변경] 안내 문구: SOOP 계정으로 로그인하면 누구나 기여 가능함을 안내 -->
+        <p>SOOP 계정으로 로그인하면 클립·인물·월드컵을 등록하고 수정할 수 있습니다.<br>수정 시 SOOP 닉네임이 자동으로 기록됩니다.</p>
       </div>
 
-      <div class="auth-tabs">
-        <button class="auth-tab active" id="loginTab" type="button">로그인</button>
-        <button class="auth-tab" id="signupTab" type="button">회원가입</button>
-      </div>
+      <!-- [변경] 이메일/비밀번호 탭과 폼 전부 제거 → SOOP 로그인 버튼 하나로 교체
+           이유: 별도 회원가입 없이 SOOP 계정 하나로 바로 기여할 수 있게 함
+                 SOOP 로그인 버튼 클릭 → /api/soop-login → SOOP OAuth → /api/soop-callback
+                 → 닉네임 전달 → main.js에서 localStorage 저장 + Firebase 익명 로그인 -->
+      <a href="/api/soop-login" class="auth-submit-btn">
+        SOOP으로 로그인
+      </a>
 
-      <!-- 로그인 폼 -->
-      <form class="auth-form" id="loginForm">
-        <label>
-          아이디
-          <input 
-            type="text" 
-            id="loginEmail" 
-            placeholder="아이디 입력"
-            autocomplete="username"
-            required
-          >
-        </label>
-
-        <label>
-          비밀번호
-          <input 
-            type="password" 
-            id="loginPassword" 
-            placeholder="비밀번호 입력"
-            autocomplete="current-password"
-            required
-          >
-        </label>
-
-        <button type="submit" class="auth-submit-btn">로그인</button>
-
-        <p class="auth-message" id="loginMessage"></p>
-      </form>
-
-      <!-- 회원가입 폼 -->
-      <form class="auth-form hidden" id="signupForm">
-        <label>
-          닉네임
-          <input 
-            type="text" 
-            id="signupNickname" 
-            placeholder="닉네임 입력"
-            autocomplete="nickname"
-            required
-          >
-        </label>
-
-        <label>
-          아이디
-          <input 
-            type="text" 
-            id="signupLoginId" 
-            placeholder="예: max0724_"
-            autocomplete="username"
-            required
-          >
-        </label>
-
-        <label>
-          비밀번호
-          <input 
-            type="password" 
-            id="signupPassword" 
-            placeholder="비밀번호 6자 이상"
-            autocomplete="new-password"
-            required
-          >
-        </label>
-
-        <label>
-          비밀번호 확인
-          <input 
-            type="password" 
-            id="signupPasswordCheck" 
-            placeholder="비밀번호 다시 입력"
-            autocomplete="new-password"
-            required
-          >
-        </label>
-
-        <button type="submit" class="auth-submit-btn">회원가입</button>
-
-        <p class="auth-message" id="signupMessage"></p>
-      </form>
+      <!-- SOOP 콜백 처리 결과 메시지 (main.js에서 제어) -->
+      <p class="auth-message" id="soopMessage"></p>
 
     </section>
 
