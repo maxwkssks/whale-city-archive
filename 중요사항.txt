@@ -1,0 +1,99 @@
+고래시티 아카이브 - 작업 내용 및 할 일 정리
+
+[ 무엇을 바꿨나 ]
+
+원래 이메일/비밀번호로 회원가입·로그인하던 방식을
+SOOP 계정 로그인으로 완전히 교체했습니다.
+
+바뀐 로그인 흐름
+  로그인 버튼 클릭
+  → SOOP 로그인 페이지로 이동
+  → SOOP 계정으로 로그인
+  → 자동으로 사이트로 돌아옴
+  → 완료
+
+바뀐 데이터 구조
+  - 클립, 인물, 월드컵을 올리면 올린 사람의 SOOP ID가 함께 저장됨
+  - 수정/삭제는 본인 SOOP ID가 일치하는 것만 가능
+  - 수정 시 수정자 SOOP 닉네임이 자동 기록됨 (editedBy 필드)
+  - 다른 기기에서 로그인해도 같은 SOOP 계정이면 본인 게시물 수정 가능
+
+
+
+[ 해야 할 것 ]
+
+1. Firebase - 익명 인증 켜기 (필수)
+----------------------------------------
+Firebase Console 접속
+→ whale-city-archive 프로젝트
+→ Authentication
+→ Sign-in method
+→ 익명(Anonymous)
+→ 사용 설정
+
+이게 꺼져 있으면 로그인 자체가 안 됩니다.
+
+
+2. Firebase - Firestore 보안 규칙 변경 (필수)
+----------------------------------------
+Firestore Database → 규칙 탭에서
+아래 내용으로 교체 후 게시 버튼 클릭
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read: if true;
+      allow write: if request.auth != null;
+    }
+  }
+}
+
+이게 없으면 클립/인물/월드컵 등록이 전부 실패합니다.
+
+
+3. Vercel - 환경변수 3개 설정 (필수)
+----------------------------------------
+Vercel 프로젝트 → Settings → Environment Variables에서 아래 3개 추가
+
+  SOOP_CLIENT_ID     : SOOP 개발자센터에서 발급받은 Client ID
+  SOOP_CLIENT_SECRET : SOOP 개발자센터에서 발급받은 Client Secret
+  SOOP_REDIRECT_URI  : https://본인배포도메인/api/soop-callback
+
+이게 없으면 SOOP 로그인 버튼을 눌러도 연결이 안 됩니다.
+
+
+4. 첫 배포 후 - SOOP 응답 필드명 확인 (중요)
+----------------------------------------
+첫 로그인을 시도한 뒤
+Vercel 대시보드 → Logs 탭을 열면 이런 줄이 보입니다.
+
+  SOOP 프로필 응답 키: ["user_id", "user_nick", ...]
+
+목록에 user_id 와 user_nick 이 있으면 그냥 넘어가면 됩니다.
+만약 다른 이름으로 나오면 soop-callback.js 수정이 필요합니다.
+
+
+5. 관리자 페이지 UID 업데이트 (나중에)
+----------------------------------------
+SOOP으로 처음 로그인한 뒤 관리자 페이지에 접속하면
+현재 UID가 화면에 표시됩니다.
+그 UID를 main.js의 ADMIN_UIDS 배열 안에 넣어야
+관리자 대시보드를 쓸 수 있습니다.
+
+
+6. 기존 데이터 처리 (나중에)
+----------------------------------------
+이메일 계정으로 올렸던 기존 클립/인물은
+SOOP ID 정보가 없어서 수정/삭제 버튼이 보이지 않습니다.
+Firebase 콘솔에서 해당 문서에 soopId 필드를 직접 추가하거나,
+삭제 후 재업로드하면 됩니다.
+
+
+
+
+우선순위 요약
+
+  1번, 2번, 3번 → 반드시 먼저 처리 (없으면 사이트 작동 안 함)
+  4번            → 첫 배포 직후 바로 확인
+  5번, 6번       → 운영 중 천천히 처리해도 됨

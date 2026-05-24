@@ -11,6 +11,17 @@ export default async function handler(req, res) {
   try {
     const targetUrl = String(url);
 
+    const allowed = ["sooplive.com", "sooplive.co.kr", "vod.sooplive.com", "vod.sooplive.co.kr"];
+    let parsedHost;
+    try {
+      parsedHost = new URL(targetUrl).hostname;
+    } catch {
+      return res.status(400).json({ ok: false, message: "유효하지 않은 URL입니다." });
+    }
+    if (!allowed.some(domain => parsedHost === domain || parsedHost.endsWith("." + domain))) {
+      return res.status(400).json({ ok: false, message: "SOOP URL만 허용됩니다." });
+    }
+
     const pageResponse = await fetch(targetUrl, {
       headers: {
         "User-Agent": "Mozilla/5.0"
